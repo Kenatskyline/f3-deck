@@ -517,18 +517,18 @@
       { suit: "H", suitName: "hearts", rank: "K",  file: "KH.png",  label: "MTN. CLIMBER" },
 
       { suit: "S", suitName: "spades", rank: "A",  file: "AS.png",  label: "CALF RAISE" },
-      { suit: "S", suitName: "spades", rank: "2",  file: "2S.png",  label: "BULGARIAN SPLIT SQUAT" },
-      { suit: "S", suitName: "spades", rank: "3",  file: "3S.png",  label: "WOJO SQUAT" },
-      { suit: "S", suitName: "spades", rank: "4",  file: "4S.png",  label: "ALTERNATING SIDE SQUAT" },
-      { suit: "S", suitName: "spades", rank: "5",  file: "5S.png",  label: "STANDING LUNGE" },
-      { suit: "S", suitName: "spades", rank: "6",  file: "6S.png",  label: "JUMPING LUNGE" },
-      { suit: "S", suitName: "spades", rank: "7",  file: "7S.png",  label: "MONKEY HUMPER" },
-      { suit: "S", suitName: "spades", rank: "8",  file: "8S.png",  label: "BACKWARD LUNGE" },
-      { suit: "S", suitName: "spades", rank: "9",  file: "9S.png",  label: "LOW, SLOW SQUAT" },
-      { suit: "S", suitName: "spades", rank: "10", file: "10S.png", label: "LUNGE WALK 100 M." },
-      { suit: "S", suitName: "spades", rank: "J",  file: "JS.png",  label: "SMURF JACK" },
-      { suit: "S", suitName: "spades", rank: "Q",  file: "QS.png",  label: "MONKEY HUMPER" },
-      { suit: "S", suitName: "spades", rank: "K",  file: "KS.png",  label: "SQUAT" }
+      { suit: "S", suitName: "spades", rank: "2",  file: "A2.png",  label: "BULGARIAN SPLIT SQUAT" },
+      { suit: "S", suitName: "spades", rank: "3",  file: "A3.png",  label: "WOJO SQUAT" },
+      { suit: "S", suitName: "spades", rank: "4",  file: "A4.png",  label: "ALTERNATING SIDE SQUAT" },
+      { suit: "S", suitName: "spades", rank: "5",  file: "A5.png",  label: "STANDING LUNGE" },
+      { suit: "S", suitName: "spades", rank: "6",  file: "A6.png",  label: "JUMPING LUNGE" },
+      { suit: "S", suitName: "spades", rank: "7",  file: "A7.png",  label: "MONKEY HUMPER" },
+      { suit: "S", suitName: "spades", rank: "8",  file: "A8.png",  label: "BACKWARD LUNGE" },
+      { suit: "S", suitName: "spades", rank: "9",  file: "A9.png",  label: "LOW, SLOW SQUAT" },
+      { suit: "S", suitName: "spades", rank: "10", file: "A10.png", label: "LUNGE WALK 100 M." },
+      { suit: "S", suitName: "spades", rank: "J",  file: "AJ.png",  label: "SMURF JACK" },
+      { suit: "S", suitName: "spades", rank: "Q",  file: "AQ.png",  label: "MONKEY HUMPER" },
+      { suit: "S", suitName: "spades", rank: "K",  file: "AK.png",  label: "SQUAT" }
     ];
 
     const jokers = [
@@ -759,7 +759,6 @@
       state.currentCard = null;
       render();
       setStatus(`Shuffled ${state.drawPile.length} cards from the enabled suits.`);
-      restartAnimation(els.centerCardImage, "shuffle-bump", 400);
       restartAnimation(els.drawPileCard, "bump", 400);
     }
 
