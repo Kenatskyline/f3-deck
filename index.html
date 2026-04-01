@@ -1,0 +1,671 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">  &lt;meta charset="UTF-8" /&gt;</p>
+<p class="p1">  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
+<p class="p1">  &lt;title&gt;F3 Deck&lt;/title&gt;</p>
+<p class="p1">  &lt;meta name="theme-color" content="#14532d" /&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">  &lt;style&gt;</p>
+<p class="p1">    * {</p>
+<p class="p1">      box-sizing: border-box;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    html, body {</p>
+<p class="p1">      margin: 0;</p>
+<p class="p1">      padding: 0;</p>
+<p class="p1">      width: 100%;</p>
+<p class="p1">      min-height: 100%;</p>
+<p class="p1">      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;</p>
+<p class="p1">      color: #fff;</p>
+<p class="p1">      overflow-x: hidden;</p>
+<p class="p1">      background:</p>
+<p class="p1">        radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 45%),</p>
+<p class="p1">        radial-gradient(circle at center, #1f7a3d 0%, #14532d 45%, #0d3b1f 100%);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    body::before {</p>
+<p class="p1">      content: "";</p>
+<p class="p1">      position: fixed;</p>
+<p class="p1">      inset: 0;</p>
+<p class="p1">      pointer-events: none;</p>
+<p class="p1">      opacity: 0.14;</p>
+<p class="p1">      background-image:</p>
+<p class="p1">        repeating-linear-gradient(</p>
+<p class="p1">          45deg,</p>
+<p class="p1">          rgba(255,255,255,0.05) 0px,</p>
+<p class="p1">          rgba(255,255,255,0.05) 1px,</p>
+<p class="p1">          transparent 1px,</p>
+<p class="p1">          transparent 4px</p>
+<p class="p1">        );</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .app {</p>
+<p class="p1">      position: relative;</p>
+<p class="p1">      z-index: 1;</p>
+<p class="p1">      min-height: 100vh;</p>
+<p class="p1">      padding: 18px 14px 28px;</p>
+<p class="p1">      display: flex;</p>
+<p class="p1">      flex-direction: column;</p>
+<p class="p1">      align-items: center;</p>
+<p class="p1">      gap: 14px;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .title {</p>
+<p class="p1">      font-size: 1.6rem;</p>
+<p class="p1">      font-weight: 800;</p>
+<p class="p1">      letter-spacing: 0.04em;</p>
+<p class="p1">      text-shadow: 0 2px 10px rgba(0,0,0,0.35);</p>
+<p class="p1">      text-align: center;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .subtitle {</p>
+<p class="p1">      font-size: 0.9rem;</p>
+<p class="p1">      opacity: 0.85;</p>
+<p class="p1">      margin-top: -6px;</p>
+<p class="p1">      text-align: center;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .controls,</p>
+<p class="p1">    .actions {</p>
+<p class="p1">      width: min(900px, 100%);</p>
+<p class="p1">      display: flex;</p>
+<p class="p1">      flex-wrap: wrap;</p>
+<p class="p1">      justify-content: center;</p>
+<p class="p1">      gap: 10px;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    button,</p>
+<p class="p1">    input {</p>
+<p class="p1">      font: inherit;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .suit-btn,</p>
+<p class="p1">    .action-btn {</p>
+<p class="p1">      border: none;</p>
+<p class="p1">      border-radius: 14px;</p>
+<p class="p1">      padding: 12px 16px;</p>
+<p class="p1">      cursor: pointer;</p>
+<p class="p1">      transition:</p>
+<p class="p1">        transform 160ms ease,</p>
+<p class="p1">        box-shadow 220ms ease,</p>
+<p class="p1">        opacity 180ms ease,</p>
+<p class="p1">        background-color 180ms ease;</p>
+<p class="p1">      -webkit-tap-highlight-color: transparent;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .suit-btn {</p>
+<p class="p1">      color: #fff;</p>
+<p class="p1">      background: rgba(255,255,255,0.13);</p>
+<p class="p1">      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);</p>
+<p class="p1">      font-weight: 700;</p>
+<p class="p1">      min-width: 130px;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .suit-btn.active {</p>
+<p class="p1">      background: rgba(255,255,255,0.96);</p>
+<p class="p1">      color: #111;</p>
+<p class="p1">      box-shadow:</p>
+<p class="p1">        0 0 0 1px rgba(255,255,255,0.4),</p>
+<p class="p1">        0 8px 20px rgba(0,0,0,0.22);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .suit-btn.inactive {</p>
+<p class="p1">      opacity: 0.45;</p>
+<p class="p1">      transform: scale(0.98);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .suit-btn:active,</p>
+<p class="p1">    .action-btn:active {</p>
+<p class="p1">      transform: scale(0.97);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .settings-row {</p>
+<p class="p1">      width: min(900px, 100%);</p>
+<p class="p1">      display: flex;</p>
+<p class="p1">      flex-wrap: wrap;</p>
+<p class="p1">      justify-content: center;</p>
+<p class="p1">      gap: 12px;</p>
+<p class="p1">      align-items: center;</p>
+<p class="p1">      margin-top: 2px;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .field {</p>
+<p class="p1">      display: flex;</p>
+<p class="p1">      align-items: center;</p>
+<p class="p1">      gap: 8px;</p>
+<p class="p1">      padding: 10px 14px;</p>
+<p class="p1">      border-radius: 14px;</p>
+<p class="p1">      background: rgba(255,255,255,0.12);</p>
+<p class="p1">      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .field label {</p>
+<p class="p1">      font-size: 0.95rem;</p>
+<p class="p1">      font-weight: 700;</p>
+<p class="p1">      white-space: nowrap;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .field input {</p>
+<p class="p1">      width: 72px;</p>
+<p class="p1">      padding: 8px 10px;</p>
+<p class="p1">      border: none;</p>
+<p class="p1">      border-radius: 10px;</p>
+<p class="p1">      text-align: center;</p>
+<p class="p1">      font-weight: 800;</p>
+<p class="p1">      background: rgba(255,255,255,0.96);</p>
+<p class="p1">      color: #111;</p>
+<p class="p1">      outline: none;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .status {</p>
+<p class="p1">      font-size: 0.95rem;</p>
+<p class="p1">      opacity: 0.92;</p>
+<p class="p1">      text-align: center;</p>
+<p class="p1">      min-height: 1.2em;</p>
+<p class="p1">      text-shadow: 0 2px 8px rgba(0,0,0,0.28);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .table-wrap {</p>
+<p class="p1">      width: 100%;</p>
+<p class="p1">      display: flex;</p>
+<p class="p1">      justify-content: center;</p>
+<p class="p1">      padding: 4px 0 2px;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-stage {</p>
+<p class="p1">      perspective: 1800px;</p>
+<p class="p1">      width: min(88vw, 340px);</p>
+<p class="p1">      aspect-ratio: 2.5 / 3.5;</p>
+<p class="p1">      position: relative;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-shell {</p>
+<p class="p1">      width: 100%;</p>
+<p class="p1">      height: 100%;</p>
+<p class="p1">      position: relative;</p>
+<p class="p1">      transform-style: preserve-3d;</p>
+<p class="p1">      transition: transform 420ms cubic-bezier(.2,.8,.2,1), filter 220ms ease;</p>
+<p class="p1">      filter: drop-shadow(0 18px 34px rgba(0,0,0,0.38));</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-shell.is-flipped {</p>
+<p class="p1">      transform: rotateY(180deg);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-shell.is-lifted {</p>
+<p class="p1">      transform: translateY(-8px) rotateY(180deg);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-face {</p>
+<p class="p1">      position: absolute;</p>
+<p class="p1">      inset: 0;</p>
+<p class="p1">      border-radius: 18px;</p>
+<p class="p1">      overflow: hidden;</p>
+<p class="p1">      backface-visibility: hidden;</p>
+<p class="p1">      transform-style: preserve-3d;</p>
+<p class="p1">      background: rgba(255,255,255,0.06);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-face img {</p>
+<p class="p1">      width: 100%;</p>
+<p class="p1">      height: 100%;</p>
+<p class="p1">      display: block;</p>
+<p class="p1">      object-fit: contain;</p>
+<p class="p1">      user-select: none;</p>
+<p class="p1">      -webkit-user-drag: none;</p>
+<p class="p1">      background: transparent;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .card-front {</p>
+<p class="p1">      transform: rotateY(180deg);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .glow {</p>
+<p class="p1">      position: absolute;</p>
+<p class="p1">      inset: -10px;</p>
+<p class="p1">      border-radius: 24px;</p>
+<p class="p1">      pointer-events: none;</p>
+<p class="p1">      opacity: 0;</p>
+<p class="p1">      transition: opacity 240ms ease;</p>
+<p class="p1">      background:</p>
+<p class="p1">        radial-gradient(circle at center, rgba(255,255,255,0.42), rgba(255,255,255,0) 55%);</p>
+<p class="p1">      filter: blur(10px);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .glow.active {</p>
+<p class="p1">      opacity: 0.9;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .actions {</p>
+<p class="p1">      margin-top: 6px;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .action-btn {</p>
+<p class="p1">      font-weight: 800;</p>
+<p class="p1">      min-width: 120px;</p>
+<p class="p1">      box-shadow:</p>
+<p class="p1">        0 10px 22px rgba(0,0,0,0.22),</p>
+<p class="p1">        inset 0 0 0 1px rgba(255,255,255,0.08);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .draw-btn {</p>
+<p class="p1">      background: rgba(255,255,255,0.96);</p>
+<p class="p1">      color: #111;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .secondary-btn {</p>
+<p class="p1">      background: rgba(255,255,255,0.14);</p>
+<p class="p1">      color: #fff;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .shuffle-alert {</p>
+<p class="p1">      animation: pulseGlow 1.15s ease-in-out infinite;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    @keyframes pulseGlow {</p>
+<p class="p1">      0% {</p>
+<p class="p1">        box-shadow:</p>
+<p class="p1">          0 0 0 0 rgba(255,255,255,0.55),</p>
+<p class="p1">          0 10px 22px rgba(0,0,0,0.22);</p>
+<p class="p1">      }</p>
+<p class="p1">      70% {</p>
+<p class="p1">        box-shadow:</p>
+<p class="p1">          0 0 0 16px rgba(255,255,255,0),</p>
+<p class="p1">          0 10px 22px rgba(0,0,0,0.22);</p>
+<p class="p1">      }</p>
+<p class="p1">      100% {</p>
+<p class="p1">        box-shadow:</p>
+<p class="p1">          0 0 0 0 rgba(255,255,255,0),</p>
+<p class="p1">          0 10px 22px rgba(0,0,0,0.22);</p>
+<p class="p1">      }</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    .note {</p>
+<p class="p1">      max-width: 760px;</p>
+<p class="p1">      text-align: center;</p>
+<p class="p1">      font-size: 0.85rem;</p>
+<p class="p1">      opacity: 0.78;</p>
+<p class="p1">      line-height: 1.4;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    @media (max-width: 520px) {</p>
+<p class="p1">      .suit-btn {</p>
+<p class="p1">        min-width: 44%;</p>
+<p class="p1">        padding: 11px 14px;</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      .action-btn {</p>
+<p class="p1">        min-width: 30%;</p>
+<p class="p1">        flex: 1 1 30%;</p>
+<p class="p1">      }</p>
+<p class="p1">    }</p>
+<p class="p1">  &lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1">  &lt;div class="app"&gt;</p>
+<p class="p1">    &lt;div class="title"&gt;F3 Deck&lt;/div&gt;</p>
+<p class="p1">    &lt;div class="subtitle"&gt;Dealer mode workout engine&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">    &lt;div class="controls"&gt;</p>
+<p class="p1">      &lt;button class="suit-btn active" data-suit="C"&gt;♣️ Core&lt;/button&gt;</p>
+<p class="p1">      &lt;button class="suit-btn active" data-suit="D"&gt;♦️ Upper&lt;/button&gt;</p>
+<p class="p1">      &lt;button class="suit-btn active" data-suit="H"&gt;❤️ Cardio&lt;/button&gt;</p>
+<p class="p1">      &lt;button class="suit-btn active" data-suit="S"&gt;♠️ Legs&lt;/button&gt;</p>
+<p class="p1">    &lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">    &lt;div class="settings-row"&gt;</p>
+<p class="p1">      &lt;div class="field"&gt;</p>
+<p class="p1">        &lt;label for="duplicateCount"&gt;Intensity x&lt;/label&gt;</p>
+<p class="p1">        &lt;input id="duplicateCount" type="number" min="1" step="1" value="1" /&gt;</p>
+<p class="p1">      &lt;/div&gt;</p>
+<p class="p1">    &lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">    &lt;div class="status" id="statusText"&gt;Ready to shuffle and draw.&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">    &lt;div class="table-wrap"&gt;</p>
+<p class="p1">      &lt;div class="card-stage"&gt;</p>
+<p class="p1">        &lt;div class="glow" id="cardGlow"&gt;&lt;/div&gt;</p>
+<p class="p1">        &lt;div class="card-shell" id="cardShell"&gt;</p>
+<p class="p1">          &lt;div class="card-face card-back"&gt;</p>
+<p class="p1">            &lt;img src="cards/BACK.png" alt="Card back" /&gt;</p>
+<p class="p1">          &lt;/div&gt;</p>
+<p class="p1">          &lt;div class="card-face card-front"&gt;</p>
+<p class="p1">            &lt;img id="frontImage" src="cards/BACK.png" alt="Card front" /&gt;</p>
+<p class="p1">          &lt;/div&gt;</p>
+<p class="p1">        &lt;/div&gt;</p>
+<p class="p1">      &lt;/div&gt;</p>
+<p class="p1">    &lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">    &lt;div class="actions"&gt;</p>
+<p class="p1">      &lt;button class="action-btn draw-btn" id="drawBtn"&gt;Draw&lt;/button&gt;</p>
+<p class="p1">      &lt;button class="action-btn secondary-btn" id="shuffleBtn"&gt;Shuffle&lt;/button&gt;</p>
+<p class="p1">      &lt;button class="action-btn secondary-btn" id="undoBtn"&gt;Undo&lt;/button&gt;</p>
+<p class="p1">    &lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">    &lt;div class="note"&gt;</p>
+<p class="p1">      Shuffle rebuilds the deck from only the enabled suits. Jokers are always included. Undo reverses the last draw.</p>
+<p class="p1">    &lt;/div&gt;</p>
+<p class="p1">  &lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">  &lt;script&gt;</p>
+<p class="p1">    const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];</p>
+<p class="p1">    const allSuits = ["C", "D", "H", "S"];</p>
+<p class="p2"><br></p>
+<p class="p1">    const suitNames = {</p>
+<p class="p1">      C: "Clubs",</p>
+<p class="p1">      D: "Diamonds",</p>
+<p class="p1">      H: "Hearts",</p>
+<p class="p1">      S: "Spades"</p>
+<p class="p1">    };</p>
+<p class="p2"><br></p>
+<p class="p1">    const rankNames = {</p>
+<p class="p1">      J: "Jack",</p>
+<p class="p1">      Q: "Queen",</p>
+<p class="p1">      K: "King",</p>
+<p class="p1">      A: "Ace"</p>
+<p class="p1">    };</p>
+<p class="p2"><br></p>
+<p class="p1">    const movementMap = {</p>
+<p class="p1">      "2C": "WWII Situps",</p>
+<p class="p1">      "3C": "High Slow Flutter Kicks",</p>
+<p class="p1">      "4C": "Heels to Heaven",</p>
+<p class="p1">      "5C": "Oblique Crunch — 15 each side",</p>
+<p class="p1">      "6C": "Low Plank — 60 seconds",</p>
+<p class="p1">      "7C": "Lil Baby Crunches",</p>
+<p class="p1">      "8C": "Luge Hold",</p>
+<p class="p1">      "9C": "High Plank — 90 seconds",</p>
+<p class="p1">      "10C": "Rosalita",</p>
+<p class="p1">      "JC": "Shoulder Taps",</p>
+<p class="p1">      "QC": "Freddie Mercury",</p>
+<p class="p1">      "KC": "American Hammer",</p>
+<p class="p1">      "AC": "Flutter Kicks — 100 reps",</p>
+<p class="p2"><br></p>
+<p class="p1">      "2S": "Bulgarian Split Squats",</p>
+<p class="p1">      "3S": "WOJO Squats",</p>
+<p class="p1">      "4S": "Alternating Side Squats",</p>
+<p class="p1">      "5S": "Standing Lunges",</p>
+<p class="p1">      "6S": "Jumping Lunges",</p>
+<p class="p1">      "7S": "Monkey Humpers",</p>
+<p class="p1">      "8S": "Backward Lunges",</p>
+<p class="p1">      "9S": "Low, Slow Squats",</p>
+<p class="p1">      "10S": "Lunge Walk — 100 meters",</p>
+<p class="p1">      "JS": "Smurf Jacks",</p>
+<p class="p1">      "QS": "Monkey Humpers",</p>
+<p class="p1">      "KS": "Squats",</p>
+<p class="p1">      "AS": "Calf Raises — 100 reps",</p>
+<p class="p2"><br></p>
+<p class="p1">      "2H": "Sprint — 200 meters",</p>
+<p class="p1">      "3H": "Sprint — 300 meters",</p>
+<p class="p1">      "4H": "Sprint — 400 meters",</p>
+<p class="p1">      "5H": "Karaoke — distance set by Queen",</p>
+<p class="p1">      "6H": "Backward Run — distance set by Queen",</p>
+<p class="p1">      "7H": "Bear Crawl — distance set by Queen",</p>
+<p class="p1">      "8H": "Squat Thrusts",</p>
+<p class="p1">      "9H": "High Knees",</p>
+<p class="p1">      "10H": "Butt Kicks",</p>
+<p class="p1">      "JH": "Plank Jacks",</p>
+<p class="p1">      "QH": "Burpees",</p>
+<p class="p1">      "KH": "Mountain Climbers",</p>
+<p class="p1">      "AH": "SSH — 100 reps",</p>
+<p class="p2"><br></p>
+<p class="p1">      "2D": "Hand Clap Merkin",</p>
+<p class="p1">      "3D": "Chuck Norris Merkin",</p>
+<p class="p1">      "4D": "Carolina Dry Dock",</p>
+<p class="p1">      "5D": "Hand-Release Merkin",</p>
+<p class="p1">      "6D": "Wide-Arm Merkin",</p>
+<p class="p1">      "7D": "Derkin",</p>
+<p class="p1">      "8D": "Merkin",</p>
+<p class="p1">      "9D": "Ranger Merkin",</p>
+<p class="p1">      "10D": "Incline Merkin",</p>
+<p class="p1">      "JD": "Dips",</p>
+<p class="p1">      "QD": "Diamond Merkin",</p>
+<p class="p1">      "KD": "Merkin",</p>
+<p class="p1">      "AD": "Arm Circle — 100 reps",</p>
+<p class="p2"><br></p>
+<p class="p1">      "JOKER_1": "Joker",</p>
+<p class="p1">      "JOKER_2": "Joker"</p>
+<p class="p1">    };</p>
+<p class="p2"><br></p>
+<p class="p1">    const activeSuits = new Set(["C", "D", "H", "S"]);</p>
+<p class="p1">    let drawPile = [];</p>
+<p class="p1">    let drawHistory = [];</p>
+<p class="p1">    let currentCard = null;</p>
+<p class="p2"><br></p>
+<p class="p1">    const suitButtons = [...document.querySelectorAll(".suit-btn")];</p>
+<p class="p1">    const duplicateInput = document.getElementById("duplicateCount");</p>
+<p class="p1">    const cardShell = document.getElementById("cardShell");</p>
+<p class="p1">    const frontImage = document.getElementById("frontImage");</p>
+<p class="p1">    const drawBtn = document.getElementById("drawBtn");</p>
+<p class="p1">    const shuffleBtn = document.getElementById("shuffleBtn");</p>
+<p class="p1">    const undoBtn = document.getElementById("undoBtn");</p>
+<p class="p1">    const statusText = document.getElementById("statusText");</p>
+<p class="p1">    const cardGlow = document.getElementById("cardGlow");</p>
+<p class="p2"><br></p>
+<p class="p1">    function sanitizeDuplicateCount() {</p>
+<p class="p1">      let count = parseInt(duplicateInput.value, 10);</p>
+<p class="p1">      if (Number.isNaN(count) || count &lt; 1) count = 1;</p>
+<p class="p1">      duplicateInput.value = count;</p>
+<p class="p1">      return count;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function buildDeck() {</p>
+<p class="p1">      const duplicateCount = sanitizeDuplicateCount();</p>
+<p class="p1">      const nextDeck = [];</p>
+<p class="p2"><br></p>
+<p class="p1">      for (const suit of allSuits) {</p>
+<p class="p1">        if (!activeSuits.has(suit)) continue;</p>
+<p class="p1">        for (const rank of ranks) {</p>
+<p class="p1">          const code = `${rank}${suit}`;</p>
+<p class="p1">          for (let i = 0; i &lt; duplicateCount; i += 1) {</p>
+<p class="p1">            nextDeck.push(code);</p>
+<p class="p1">          }</p>
+<p class="p1">        }</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      nextDeck.push("JOKER_1");</p>
+<p class="p1">      nextDeck.push("JOKER_2");</p>
+<p class="p2"><br></p>
+<p class="p1">      shuffleArray(nextDeck);</p>
+<p class="p1">      return nextDeck;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function shuffleArray(arr) {</p>
+<p class="p1">      for (let i = arr.length - 1; i &gt; 0; i -= 1) {</p>
+<p class="p1">        const j = Math.floor(Math.random() * (i + 1));</p>
+<p class="p1">        [arr[i], arr[j]] = [arr[j], arr[i]];</p>
+<p class="p1">      }</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function getCallout(cardCode) {</p>
+<p class="p1">      if (cardCode.startsWith("JOKER")) {</p>
+<p class="p1">        return "Joker";</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      const rank = cardCode.slice(0, -1);</p>
+<p class="p1">      const suit = cardCode.slice(-1);</p>
+<p class="p1">      const spokenRank = rankNames[rank] || rank;</p>
+<p class="p1">      const spokenSuit = suitNames[suit] || suit;</p>
+<p class="p1">      const movement = movementMap[cardCode] || "Unknown movement";</p>
+<p class="p2"><br></p>
+<p class="p1">      return `${spokenRank} of ${spokenSuit} — ${movement}`;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function speak(text) {</p>
+<p class="p1">      if (!("speechSynthesis" in window)) return;</p>
+<p class="p1">      window.speechSynthesis.cancel();</p>
+<p class="p1">      const utterance = new SpeechSynthesisUtterance(text);</p>
+<p class="p1">      utterance.rate = 0.96;</p>
+<p class="p1">      utterance.pitch = 1;</p>
+<p class="p1">      utterance.volume = 1;</p>
+<p class="p1">      window.speechSynthesis.speak(utterance);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function setStatus(text) {</p>
+<p class="p1">      statusText.textContent = text;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function setCardImage(cardCode) {</p>
+<p class="p1">      frontImage.src = `cards/${cardCode}.png`;</p>
+<p class="p1">      frontImage.alt = cardCode;</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function showGlow() {</p>
+<p class="p1">      cardGlow.classList.add("active");</p>
+<p class="p1">      setTimeout(() =&gt; cardGlow.classList.remove("active"), 350);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function updateShufflePulse() {</p>
+<p class="p1">      if (drawPile.length === 0) {</p>
+<p class="p1">        shuffleBtn.classList.add("shuffle-alert");</p>
+<p class="p1">      } else {</p>
+<p class="p1">        shuffleBtn.classList.remove("shuffle-alert");</p>
+<p class="p1">      }</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function redrawCurrentCard() {</p>
+<p class="p1">      if (!currentCard) {</p>
+<p class="p1">        frontImage.src = "cards/BACK.png";</p>
+<p class="p1">        cardShell.classList.remove("is-flipped");</p>
+<p class="p1">        updateShufflePulse();</p>
+<p class="p1">        return;</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      setCardImage(currentCard);</p>
+<p class="p1">      cardShell.classList.add("is-flipped");</p>
+<p class="p1">      updateShufflePulse();</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function shuffleDeck() {</p>
+<p class="p1">      if (activeSuits.size === 0) {</p>
+<p class="p1">        setStatus("Select at least one suit.");</p>
+<p class="p1">        return;</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      drawPile = buildDeck();</p>
+<p class="p1">      drawHistory = [];</p>
+<p class="p1">      currentCard = null;</p>
+<p class="p1">      cardShell.classList.remove("is-flipped", "is-lifted");</p>
+<p class="p1">      frontImage.src = "cards/BACK.png";</p>
+<p class="p1">      setStatus(`Deck shuffled. ${drawPile.length} cards ready.`);</p>
+<p class="p1">      updateShufflePulse();</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function drawCard() {</p>
+<p class="p1">      if (drawPile.length === 0) {</p>
+<p class="p1">        setStatus("Deck empty. Shuffle to rebuild.");</p>
+<p class="p1">        updateShufflePulse();</p>
+<p class="p1">        return;</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      const nextCard = drawPile.pop();</p>
+<p class="p1">      drawHistory.push({</p>
+<p class="p1">        type: "draw",</p>
+<p class="p1">        card: nextCard,</p>
+<p class="p1">        previousCard: currentCard</p>
+<p class="p1">      });</p>
+<p class="p1">      currentCard = nextCard;</p>
+<p class="p2"><br></p>
+<p class="p1">      cardShell.classList.remove("is-flipped", "is-lifted");</p>
+<p class="p2"><br></p>
+<p class="p1">      setTimeout(() =&gt; {</p>
+<p class="p1">        setCardImage(nextCard);</p>
+<p class="p1">        cardShell.classList.add("is-flipped");</p>
+<p class="p1">        requestAnimationFrame(() =&gt; {</p>
+<p class="p1">          setTimeout(() =&gt; cardShell.classList.add("is-lifted"), 30);</p>
+<p class="p1">        });</p>
+<p class="p1">        const callout = getCallout(nextCard);</p>
+<p class="p1">        setStatus(callout);</p>
+<p class="p1">        showGlow();</p>
+<p class="p1">        speak(callout);</p>
+<p class="p1">        updateShufflePulse();</p>
+<p class="p1">      }, 90);</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function undoLastAction() {</p>
+<p class="p1">      if (drawHistory.length === 0) {</p>
+<p class="p1">        setStatus("Nothing to undo.");</p>
+<p class="p1">        return;</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      const lastAction = drawHistory.pop();</p>
+<p class="p2"><br></p>
+<p class="p1">      if (lastAction.type === "draw") {</p>
+<p class="p1">        drawPile.push(lastAction.card);</p>
+<p class="p1">        currentCard = lastAction.previousCard || null;</p>
+<p class="p2"><br></p>
+<p class="p1">        cardShell.classList.remove("is-lifted");</p>
+<p class="p1">        if (currentCard) {</p>
+<p class="p1">          setCardImage(currentCard);</p>
+<p class="p1">          cardShell.classList.add("is-flipped");</p>
+<p class="p1">          setStatus(`Undo complete. Back to ${getCallout(currentCard)}.`);</p>
+<p class="p1">        } else {</p>
+<p class="p1">          frontImage.src = "cards/BACK.png";</p>
+<p class="p1">          cardShell.classList.remove("is-flipped");</p>
+<p class="p1">          setStatus("Undo complete.");</p>
+<p class="p1">        }</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      updateShufflePulse();</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    function toggleSuit(suit, button) {</p>
+<p class="p1">      if (activeSuits.has(suit)) {</p>
+<p class="p1">        if (activeSuits.size === 1) {</p>
+<p class="p1">          setStatus("At least one suit must stay enabled.");</p>
+<p class="p1">          return;</p>
+<p class="p1">        }</p>
+<p class="p1">        activeSuits.delete(suit);</p>
+<p class="p1">        button.classList.remove("active");</p>
+<p class="p1">        button.classList.add("inactive");</p>
+<p class="p1">      } else {</p>
+<p class="p1">        activeSuits.add(suit);</p>
+<p class="p1">        button.classList.add("active");</p>
+<p class="p1">        button.classList.remove("inactive");</p>
+<p class="p1">      }</p>
+<p class="p2"><br></p>
+<p class="p1">      shuffleDeck();</p>
+<p class="p1">    }</p>
+<p class="p2"><br></p>
+<p class="p1">    suitButtons.forEach((button) =&gt; {</p>
+<p class="p1">      button.addEventListener("click", () =&gt; {</p>
+<p class="p1">        toggleSuit(button.dataset.suit, button);</p>
+<p class="p1">      });</p>
+<p class="p1">    });</p>
+<p class="p2"><br></p>
+<p class="p1">    duplicateInput.addEventListener("change", () =&gt; {</p>
+<p class="p1">      sanitizeDuplicateCount();</p>
+<p class="p1">      shuffleDeck();</p>
+<p class="p1">    });</p>
+<p class="p2"><br></p>
+<p class="p1">    drawBtn.addEventListener("click", drawCard);</p>
+<p class="p1">    shuffleBtn.addEventListener("click", shuffleDeck);</p>
+<p class="p1">    undoBtn.addEventListener("click", undoLastAction);</p>
+<p class="p2"><br></p>
+<p class="p1">    document.addEventListener("keydown", (event) =&gt; {</p>
+<p class="p1">      if (event.code === "Space" || event.code === "Enter") {</p>
+<p class="p1">        event.preventDefault();</p>
+<p class="p1">        drawCard();</p>
+<p class="p1">      }</p>
+<p class="p1">    });</p>
+<p class="p2"><br></p>
+<p class="p1">    shuffleDeck();</p>
+<p class="p1">  &lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
