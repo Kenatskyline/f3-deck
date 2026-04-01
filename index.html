@@ -1,671 +1,748 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#14532d" />
+  <title>F3 Deck</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 45%),
+        radial-gradient(circle at center, #1f7a3d 0%, #14532d 45%, #0b3d11 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.14;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.05) 0px,
+          rgba(255,255,255,0.05) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      padding: 14px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topbar {
+      width: min(1200px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .title {
+      font-size: clamp(1.1rem, 1.3vw, 1.4rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      opacity: 0.88;
+      text-align: center;
+    }
+
+    .controls,
+    .actions {
+      width: min(1200px, 100%);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .suit-btn,
+    .action-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 220ms ease, opacity 180ms ease, background-color 180ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .suit-btn {
+      color: #fff;
+      background: rgba(255,255,255,0.13);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+      font-weight: 700;
+      min-width: 138px;
+    }
+
+    .suit-btn.active {
+      background: rgba(255,255,255,0.96);
+      color: #111;
+      box-shadow:
+        0 0 14px rgba(255,255,255,0.4),
+        0 8px 24px rgba(0,0,0,0.22);
+    }
+
+    .suit-btn.inactive {
+      opacity: 0.42;
+      transform: scale(0.98);
+    }
+
+    .suit-btn:active,
+    .action-btn:active {
+      transform: scale(0.97);
+    }
+
+    .settings-row {
+      width: min(1200px, 100%);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .field label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .field input[type="number"] {
+      width: 74px;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 800;
+      background: rgba(255,255,255,0.96);
+      color: #111;
+      outline: none;
+    }
+
+    .action-btn {
+      background: rgba(0,0,0,0.34);
+      color: #fff;
+      font-weight: 800;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        0 8px 20px rgba(0,0,0,0.22);
+    }
+
+    .action-btn.primary {
+      background: rgba(255,255,255,0.96);
+      color: #111;
+    }
+
+    .action-btn.pulse {
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0.0), inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 20px rgba(0,0,0,0.22); }
+      50% { transform: scale(1.04); box-shadow: 0 0 22px rgba(255,255,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 20px rgba(0,0,0,0.22); }
+    }
+
+    .status {
+      font-size: 0.95rem;
+      opacity: 0.92;
+      text-align: center;
+      min-height: 1.3em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.28);
+    }
+
+    .table-area {
+      width: min(1200px, 100%);
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(16px, 2vw, 28px);
+    }
+
+    .pile-column {
+      width: clamp(92px, 11vw, 140px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pile-label {
+      font-size: 0.88rem;
+      font-weight: 800;
+      opacity: 0.88;
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    .mini-card {
+      width: 100%;
+      aspect-ratio: 2.5 / 3.5;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        0 10px 24px rgba(0,0,0,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 220ms ease;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .mini-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .center-stage {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-scene {
+      width: min(34vw, 340px);
+      min-width: 230px;
+      aspect-ratio: 2.5 / 3.5;
+      perspective: 1800px;
+      position: relative;
+    }
+
+    .card3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 560ms cubic-bezier(.2,.9,.2,1), filter 320ms ease;
+      filter: drop-shadow(0 16px 28px rgba(0,0,0,0.30));
+    }
+
+    .card3d.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card3d.reveal-pop {
+      animation: revealPop 420ms ease;
+    }
+
+    @keyframes revealPop {
+      0% { transform: rotateY(180deg) scale(0.96) translateY(8px); }
+      60% { transform: rotateY(180deg) scale(1.02) translateY(-2px); }
+      100% { transform: rotateY(180deg) scale(1) translateY(0); }
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .card-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      border-radius: 20px;
+    }
+
+    .card-face.back {
+      transform: rotateY(0deg);
+    }
+
+    .card-face.front {
+      transform: rotateY(180deg);
+      box-shadow: 0 0 18px rgba(255,255,255,0.20);
+    }
+
+    .meta {
+      width: min(1200px, 100%);
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      text-align: center;
+      font-size: 0.95rem;
+      opacity: 0.95;
+      margin-top: 2px;
+    }
+
+    .meta b {
+      font-weight: 900;
+    }
+
+    @media (max-width: 900px) {
+      .table-area {
+        flex-direction: column;
+      }
+
+      .pile-column {
+        width: min(180px, 55vw);
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .pile-label {
+        min-width: 72px;
+      }
+
+      .mini-card {
+        width: 80px;
+      }
+
+      .center-stage {
+        width: 100%;
+      }
+
+      .card-scene {
+        width: min(74vw, 340px);
+        min-width: 220px;
+      }
+    }
+
+    @media (orientation: portrait) {
+      .app {
+        padding-top: max(14px, env(safe-area-inset-top));
+        padding-bottom: max(14px, env(safe-area-inset-bottom));
+      }
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">  &lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1">  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
-<p class="p1">  &lt;title&gt;F3 Deck&lt;/title&gt;</p>
-<p class="p1">  &lt;meta name="theme-color" content="#14532d" /&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">  &lt;style&gt;</p>
-<p class="p1">    * {</p>
-<p class="p1">      box-sizing: border-box;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    html, body {</p>
-<p class="p1">      margin: 0;</p>
-<p class="p1">      padding: 0;</p>
-<p class="p1">      width: 100%;</p>
-<p class="p1">      min-height: 100%;</p>
-<p class="p1">      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;</p>
-<p class="p1">      color: #fff;</p>
-<p class="p1">      overflow-x: hidden;</p>
-<p class="p1">      background:</p>
-<p class="p1">        radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 45%),</p>
-<p class="p1">        radial-gradient(circle at center, #1f7a3d 0%, #14532d 45%, #0d3b1f 100%);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    body::before {</p>
-<p class="p1">      content: "";</p>
-<p class="p1">      position: fixed;</p>
-<p class="p1">      inset: 0;</p>
-<p class="p1">      pointer-events: none;</p>
-<p class="p1">      opacity: 0.14;</p>
-<p class="p1">      background-image:</p>
-<p class="p1">        repeating-linear-gradient(</p>
-<p class="p1">          45deg,</p>
-<p class="p1">          rgba(255,255,255,0.05) 0px,</p>
-<p class="p1">          rgba(255,255,255,0.05) 1px,</p>
-<p class="p1">          transparent 1px,</p>
-<p class="p1">          transparent 4px</p>
-<p class="p1">        );</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .app {</p>
-<p class="p1">      position: relative;</p>
-<p class="p1">      z-index: 1;</p>
-<p class="p1">      min-height: 100vh;</p>
-<p class="p1">      padding: 18px 14px 28px;</p>
-<p class="p1">      display: flex;</p>
-<p class="p1">      flex-direction: column;</p>
-<p class="p1">      align-items: center;</p>
-<p class="p1">      gap: 14px;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .title {</p>
-<p class="p1">      font-size: 1.6rem;</p>
-<p class="p1">      font-weight: 800;</p>
-<p class="p1">      letter-spacing: 0.04em;</p>
-<p class="p1">      text-shadow: 0 2px 10px rgba(0,0,0,0.35);</p>
-<p class="p1">      text-align: center;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .subtitle {</p>
-<p class="p1">      font-size: 0.9rem;</p>
-<p class="p1">      opacity: 0.85;</p>
-<p class="p1">      margin-top: -6px;</p>
-<p class="p1">      text-align: center;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .controls,</p>
-<p class="p1">    .actions {</p>
-<p class="p1">      width: min(900px, 100%);</p>
-<p class="p1">      display: flex;</p>
-<p class="p1">      flex-wrap: wrap;</p>
-<p class="p1">      justify-content: center;</p>
-<p class="p1">      gap: 10px;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    button,</p>
-<p class="p1">    input {</p>
-<p class="p1">      font: inherit;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .suit-btn,</p>
-<p class="p1">    .action-btn {</p>
-<p class="p1">      border: none;</p>
-<p class="p1">      border-radius: 14px;</p>
-<p class="p1">      padding: 12px 16px;</p>
-<p class="p1">      cursor: pointer;</p>
-<p class="p1">      transition:</p>
-<p class="p1">        transform 160ms ease,</p>
-<p class="p1">        box-shadow 220ms ease,</p>
-<p class="p1">        opacity 180ms ease,</p>
-<p class="p1">        background-color 180ms ease;</p>
-<p class="p1">      -webkit-tap-highlight-color: transparent;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .suit-btn {</p>
-<p class="p1">      color: #fff;</p>
-<p class="p1">      background: rgba(255,255,255,0.13);</p>
-<p class="p1">      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);</p>
-<p class="p1">      font-weight: 700;</p>
-<p class="p1">      min-width: 130px;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .suit-btn.active {</p>
-<p class="p1">      background: rgba(255,255,255,0.96);</p>
-<p class="p1">      color: #111;</p>
-<p class="p1">      box-shadow:</p>
-<p class="p1">        0 0 0 1px rgba(255,255,255,0.4),</p>
-<p class="p1">        0 8px 20px rgba(0,0,0,0.22);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .suit-btn.inactive {</p>
-<p class="p1">      opacity: 0.45;</p>
-<p class="p1">      transform: scale(0.98);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .suit-btn:active,</p>
-<p class="p1">    .action-btn:active {</p>
-<p class="p1">      transform: scale(0.97);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .settings-row {</p>
-<p class="p1">      width: min(900px, 100%);</p>
-<p class="p1">      display: flex;</p>
-<p class="p1">      flex-wrap: wrap;</p>
-<p class="p1">      justify-content: center;</p>
-<p class="p1">      gap: 12px;</p>
-<p class="p1">      align-items: center;</p>
-<p class="p1">      margin-top: 2px;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .field {</p>
-<p class="p1">      display: flex;</p>
-<p class="p1">      align-items: center;</p>
-<p class="p1">      gap: 8px;</p>
-<p class="p1">      padding: 10px 14px;</p>
-<p class="p1">      border-radius: 14px;</p>
-<p class="p1">      background: rgba(255,255,255,0.12);</p>
-<p class="p1">      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .field label {</p>
-<p class="p1">      font-size: 0.95rem;</p>
-<p class="p1">      font-weight: 700;</p>
-<p class="p1">      white-space: nowrap;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .field input {</p>
-<p class="p1">      width: 72px;</p>
-<p class="p1">      padding: 8px 10px;</p>
-<p class="p1">      border: none;</p>
-<p class="p1">      border-radius: 10px;</p>
-<p class="p1">      text-align: center;</p>
-<p class="p1">      font-weight: 800;</p>
-<p class="p1">      background: rgba(255,255,255,0.96);</p>
-<p class="p1">      color: #111;</p>
-<p class="p1">      outline: none;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .status {</p>
-<p class="p1">      font-size: 0.95rem;</p>
-<p class="p1">      opacity: 0.92;</p>
-<p class="p1">      text-align: center;</p>
-<p class="p1">      min-height: 1.2em;</p>
-<p class="p1">      text-shadow: 0 2px 8px rgba(0,0,0,0.28);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .table-wrap {</p>
-<p class="p1">      width: 100%;</p>
-<p class="p1">      display: flex;</p>
-<p class="p1">      justify-content: center;</p>
-<p class="p1">      padding: 4px 0 2px;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-stage {</p>
-<p class="p1">      perspective: 1800px;</p>
-<p class="p1">      width: min(88vw, 340px);</p>
-<p class="p1">      aspect-ratio: 2.5 / 3.5;</p>
-<p class="p1">      position: relative;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-shell {</p>
-<p class="p1">      width: 100%;</p>
-<p class="p1">      height: 100%;</p>
-<p class="p1">      position: relative;</p>
-<p class="p1">      transform-style: preserve-3d;</p>
-<p class="p1">      transition: transform 420ms cubic-bezier(.2,.8,.2,1), filter 220ms ease;</p>
-<p class="p1">      filter: drop-shadow(0 18px 34px rgba(0,0,0,0.38));</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-shell.is-flipped {</p>
-<p class="p1">      transform: rotateY(180deg);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-shell.is-lifted {</p>
-<p class="p1">      transform: translateY(-8px) rotateY(180deg);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-face {</p>
-<p class="p1">      position: absolute;</p>
-<p class="p1">      inset: 0;</p>
-<p class="p1">      border-radius: 18px;</p>
-<p class="p1">      overflow: hidden;</p>
-<p class="p1">      backface-visibility: hidden;</p>
-<p class="p1">      transform-style: preserve-3d;</p>
-<p class="p1">      background: rgba(255,255,255,0.06);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-face img {</p>
-<p class="p1">      width: 100%;</p>
-<p class="p1">      height: 100%;</p>
-<p class="p1">      display: block;</p>
-<p class="p1">      object-fit: contain;</p>
-<p class="p1">      user-select: none;</p>
-<p class="p1">      -webkit-user-drag: none;</p>
-<p class="p1">      background: transparent;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .card-front {</p>
-<p class="p1">      transform: rotateY(180deg);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .glow {</p>
-<p class="p1">      position: absolute;</p>
-<p class="p1">      inset: -10px;</p>
-<p class="p1">      border-radius: 24px;</p>
-<p class="p1">      pointer-events: none;</p>
-<p class="p1">      opacity: 0;</p>
-<p class="p1">      transition: opacity 240ms ease;</p>
-<p class="p1">      background:</p>
-<p class="p1">        radial-gradient(circle at center, rgba(255,255,255,0.42), rgba(255,255,255,0) 55%);</p>
-<p class="p1">      filter: blur(10px);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .glow.active {</p>
-<p class="p1">      opacity: 0.9;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .actions {</p>
-<p class="p1">      margin-top: 6px;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .action-btn {</p>
-<p class="p1">      font-weight: 800;</p>
-<p class="p1">      min-width: 120px;</p>
-<p class="p1">      box-shadow:</p>
-<p class="p1">        0 10px 22px rgba(0,0,0,0.22),</p>
-<p class="p1">        inset 0 0 0 1px rgba(255,255,255,0.08);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .draw-btn {</p>
-<p class="p1">      background: rgba(255,255,255,0.96);</p>
-<p class="p1">      color: #111;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .secondary-btn {</p>
-<p class="p1">      background: rgba(255,255,255,0.14);</p>
-<p class="p1">      color: #fff;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .shuffle-alert {</p>
-<p class="p1">      animation: pulseGlow 1.15s ease-in-out infinite;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    @keyframes pulseGlow {</p>
-<p class="p1">      0% {</p>
-<p class="p1">        box-shadow:</p>
-<p class="p1">          0 0 0 0 rgba(255,255,255,0.55),</p>
-<p class="p1">          0 10px 22px rgba(0,0,0,0.22);</p>
-<p class="p1">      }</p>
-<p class="p1">      70% {</p>
-<p class="p1">        box-shadow:</p>
-<p class="p1">          0 0 0 16px rgba(255,255,255,0),</p>
-<p class="p1">          0 10px 22px rgba(0,0,0,0.22);</p>
-<p class="p1">      }</p>
-<p class="p1">      100% {</p>
-<p class="p1">        box-shadow:</p>
-<p class="p1">          0 0 0 0 rgba(255,255,255,0),</p>
-<p class="p1">          0 10px 22px rgba(0,0,0,0.22);</p>
-<p class="p1">      }</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    .note {</p>
-<p class="p1">      max-width: 760px;</p>
-<p class="p1">      text-align: center;</p>
-<p class="p1">      font-size: 0.85rem;</p>
-<p class="p1">      opacity: 0.78;</p>
-<p class="p1">      line-height: 1.4;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    @media (max-width: 520px) {</p>
-<p class="p1">      .suit-btn {</p>
-<p class="p1">        min-width: 44%;</p>
-<p class="p1">        padding: 11px 14px;</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      .action-btn {</p>
-<p class="p1">        min-width: 30%;</p>
-<p class="p1">        flex: 1 1 30%;</p>
-<p class="p1">      }</p>
-<p class="p1">    }</p>
-<p class="p1">  &lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">  &lt;div class="app"&gt;</p>
-<p class="p1">    &lt;div class="title"&gt;F3 Deck&lt;/div&gt;</p>
-<p class="p1">    &lt;div class="subtitle"&gt;Dealer mode workout engine&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">    &lt;div class="controls"&gt;</p>
-<p class="p1">      &lt;button class="suit-btn active" data-suit="C"&gt;♣️ Core&lt;/button&gt;</p>
-<p class="p1">      &lt;button class="suit-btn active" data-suit="D"&gt;♦️ Upper&lt;/button&gt;</p>
-<p class="p1">      &lt;button class="suit-btn active" data-suit="H"&gt;❤️ Cardio&lt;/button&gt;</p>
-<p class="p1">      &lt;button class="suit-btn active" data-suit="S"&gt;♠️ Legs&lt;/button&gt;</p>
-<p class="p1">    &lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">    &lt;div class="settings-row"&gt;</p>
-<p class="p1">      &lt;div class="field"&gt;</p>
-<p class="p1">        &lt;label for="duplicateCount"&gt;Intensity x&lt;/label&gt;</p>
-<p class="p1">        &lt;input id="duplicateCount" type="number" min="1" step="1" value="1" /&gt;</p>
-<p class="p1">      &lt;/div&gt;</p>
-<p class="p1">    &lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">    &lt;div class="status" id="statusText"&gt;Ready to shuffle and draw.&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">    &lt;div class="table-wrap"&gt;</p>
-<p class="p1">      &lt;div class="card-stage"&gt;</p>
-<p class="p1">        &lt;div class="glow" id="cardGlow"&gt;&lt;/div&gt;</p>
-<p class="p1">        &lt;div class="card-shell" id="cardShell"&gt;</p>
-<p class="p1">          &lt;div class="card-face card-back"&gt;</p>
-<p class="p1">            &lt;img src="cards/BACK.png" alt="Card back" /&gt;</p>
-<p class="p1">          &lt;/div&gt;</p>
-<p class="p1">          &lt;div class="card-face card-front"&gt;</p>
-<p class="p1">            &lt;img id="frontImage" src="cards/BACK.png" alt="Card front" /&gt;</p>
-<p class="p1">          &lt;/div&gt;</p>
-<p class="p1">        &lt;/div&gt;</p>
-<p class="p1">      &lt;/div&gt;</p>
-<p class="p1">    &lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">    &lt;div class="actions"&gt;</p>
-<p class="p1">      &lt;button class="action-btn draw-btn" id="drawBtn"&gt;Draw&lt;/button&gt;</p>
-<p class="p1">      &lt;button class="action-btn secondary-btn" id="shuffleBtn"&gt;Shuffle&lt;/button&gt;</p>
-<p class="p1">      &lt;button class="action-btn secondary-btn" id="undoBtn"&gt;Undo&lt;/button&gt;</p>
-<p class="p1">    &lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">    &lt;div class="note"&gt;</p>
-<p class="p1">      Shuffle rebuilds the deck from only the enabled suits. Jokers are always included. Undo reverses the last draw.</p>
-<p class="p1">    &lt;/div&gt;</p>
-<p class="p1">  &lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">  &lt;script&gt;</p>
-<p class="p1">    const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];</p>
-<p class="p1">    const allSuits = ["C", "D", "H", "S"];</p>
-<p class="p2"><br></p>
-<p class="p1">    const suitNames = {</p>
-<p class="p1">      C: "Clubs",</p>
-<p class="p1">      D: "Diamonds",</p>
-<p class="p1">      H: "Hearts",</p>
-<p class="p1">      S: "Spades"</p>
-<p class="p1">    };</p>
-<p class="p2"><br></p>
-<p class="p1">    const rankNames = {</p>
-<p class="p1">      J: "Jack",</p>
-<p class="p1">      Q: "Queen",</p>
-<p class="p1">      K: "King",</p>
-<p class="p1">      A: "Ace"</p>
-<p class="p1">    };</p>
-<p class="p2"><br></p>
-<p class="p1">    const movementMap = {</p>
-<p class="p1">      "2C": "WWII Situps",</p>
-<p class="p1">      "3C": "High Slow Flutter Kicks",</p>
-<p class="p1">      "4C": "Heels to Heaven",</p>
-<p class="p1">      "5C": "Oblique Crunch — 15 each side",</p>
-<p class="p1">      "6C": "Low Plank — 60 seconds",</p>
-<p class="p1">      "7C": "Lil Baby Crunches",</p>
-<p class="p1">      "8C": "Luge Hold",</p>
-<p class="p1">      "9C": "High Plank — 90 seconds",</p>
-<p class="p1">      "10C": "Rosalita",</p>
-<p class="p1">      "JC": "Shoulder Taps",</p>
-<p class="p1">      "QC": "Freddie Mercury",</p>
-<p class="p1">      "KC": "American Hammer",</p>
-<p class="p1">      "AC": "Flutter Kicks — 100 reps",</p>
-<p class="p2"><br></p>
-<p class="p1">      "2S": "Bulgarian Split Squats",</p>
-<p class="p1">      "3S": "WOJO Squats",</p>
-<p class="p1">      "4S": "Alternating Side Squats",</p>
-<p class="p1">      "5S": "Standing Lunges",</p>
-<p class="p1">      "6S": "Jumping Lunges",</p>
-<p class="p1">      "7S": "Monkey Humpers",</p>
-<p class="p1">      "8S": "Backward Lunges",</p>
-<p class="p1">      "9S": "Low, Slow Squats",</p>
-<p class="p1">      "10S": "Lunge Walk — 100 meters",</p>
-<p class="p1">      "JS": "Smurf Jacks",</p>
-<p class="p1">      "QS": "Monkey Humpers",</p>
-<p class="p1">      "KS": "Squats",</p>
-<p class="p1">      "AS": "Calf Raises — 100 reps",</p>
-<p class="p2"><br></p>
-<p class="p1">      "2H": "Sprint — 200 meters",</p>
-<p class="p1">      "3H": "Sprint — 300 meters",</p>
-<p class="p1">      "4H": "Sprint — 400 meters",</p>
-<p class="p1">      "5H": "Karaoke — distance set by Queen",</p>
-<p class="p1">      "6H": "Backward Run — distance set by Queen",</p>
-<p class="p1">      "7H": "Bear Crawl — distance set by Queen",</p>
-<p class="p1">      "8H": "Squat Thrusts",</p>
-<p class="p1">      "9H": "High Knees",</p>
-<p class="p1">      "10H": "Butt Kicks",</p>
-<p class="p1">      "JH": "Plank Jacks",</p>
-<p class="p1">      "QH": "Burpees",</p>
-<p class="p1">      "KH": "Mountain Climbers",</p>
-<p class="p1">      "AH": "SSH — 100 reps",</p>
-<p class="p2"><br></p>
-<p class="p1">      "2D": "Hand Clap Merkin",</p>
-<p class="p1">      "3D": "Chuck Norris Merkin",</p>
-<p class="p1">      "4D": "Carolina Dry Dock",</p>
-<p class="p1">      "5D": "Hand-Release Merkin",</p>
-<p class="p1">      "6D": "Wide-Arm Merkin",</p>
-<p class="p1">      "7D": "Derkin",</p>
-<p class="p1">      "8D": "Merkin",</p>
-<p class="p1">      "9D": "Ranger Merkin",</p>
-<p class="p1">      "10D": "Incline Merkin",</p>
-<p class="p1">      "JD": "Dips",</p>
-<p class="p1">      "QD": "Diamond Merkin",</p>
-<p class="p1">      "KD": "Merkin",</p>
-<p class="p1">      "AD": "Arm Circle — 100 reps",</p>
-<p class="p2"><br></p>
-<p class="p1">      "JOKER_1": "Joker",</p>
-<p class="p1">      "JOKER_2": "Joker"</p>
-<p class="p1">    };</p>
-<p class="p2"><br></p>
-<p class="p1">    const activeSuits = new Set(["C", "D", "H", "S"]);</p>
-<p class="p1">    let drawPile = [];</p>
-<p class="p1">    let drawHistory = [];</p>
-<p class="p1">    let currentCard = null;</p>
-<p class="p2"><br></p>
-<p class="p1">    const suitButtons = [...document.querySelectorAll(".suit-btn")];</p>
-<p class="p1">    const duplicateInput = document.getElementById("duplicateCount");</p>
-<p class="p1">    const cardShell = document.getElementById("cardShell");</p>
-<p class="p1">    const frontImage = document.getElementById("frontImage");</p>
-<p class="p1">    const drawBtn = document.getElementById("drawBtn");</p>
-<p class="p1">    const shuffleBtn = document.getElementById("shuffleBtn");</p>
-<p class="p1">    const undoBtn = document.getElementById("undoBtn");</p>
-<p class="p1">    const statusText = document.getElementById("statusText");</p>
-<p class="p1">    const cardGlow = document.getElementById("cardGlow");</p>
-<p class="p2"><br></p>
-<p class="p1">    function sanitizeDuplicateCount() {</p>
-<p class="p1">      let count = parseInt(duplicateInput.value, 10);</p>
-<p class="p1">      if (Number.isNaN(count) || count &lt; 1) count = 1;</p>
-<p class="p1">      duplicateInput.value = count;</p>
-<p class="p1">      return count;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function buildDeck() {</p>
-<p class="p1">      const duplicateCount = sanitizeDuplicateCount();</p>
-<p class="p1">      const nextDeck = [];</p>
-<p class="p2"><br></p>
-<p class="p1">      for (const suit of allSuits) {</p>
-<p class="p1">        if (!activeSuits.has(suit)) continue;</p>
-<p class="p1">        for (const rank of ranks) {</p>
-<p class="p1">          const code = `${rank}${suit}`;</p>
-<p class="p1">          for (let i = 0; i &lt; duplicateCount; i += 1) {</p>
-<p class="p1">            nextDeck.push(code);</p>
-<p class="p1">          }</p>
-<p class="p1">        }</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      nextDeck.push("JOKER_1");</p>
-<p class="p1">      nextDeck.push("JOKER_2");</p>
-<p class="p2"><br></p>
-<p class="p1">      shuffleArray(nextDeck);</p>
-<p class="p1">      return nextDeck;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function shuffleArray(arr) {</p>
-<p class="p1">      for (let i = arr.length - 1; i &gt; 0; i -= 1) {</p>
-<p class="p1">        const j = Math.floor(Math.random() * (i + 1));</p>
-<p class="p1">        [arr[i], arr[j]] = [arr[j], arr[i]];</p>
-<p class="p1">      }</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function getCallout(cardCode) {</p>
-<p class="p1">      if (cardCode.startsWith("JOKER")) {</p>
-<p class="p1">        return "Joker";</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      const rank = cardCode.slice(0, -1);</p>
-<p class="p1">      const suit = cardCode.slice(-1);</p>
-<p class="p1">      const spokenRank = rankNames[rank] || rank;</p>
-<p class="p1">      const spokenSuit = suitNames[suit] || suit;</p>
-<p class="p1">      const movement = movementMap[cardCode] || "Unknown movement";</p>
-<p class="p2"><br></p>
-<p class="p1">      return `${spokenRank} of ${spokenSuit} — ${movement}`;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function speak(text) {</p>
-<p class="p1">      if (!("speechSynthesis" in window)) return;</p>
-<p class="p1">      window.speechSynthesis.cancel();</p>
-<p class="p1">      const utterance = new SpeechSynthesisUtterance(text);</p>
-<p class="p1">      utterance.rate = 0.96;</p>
-<p class="p1">      utterance.pitch = 1;</p>
-<p class="p1">      utterance.volume = 1;</p>
-<p class="p1">      window.speechSynthesis.speak(utterance);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function setStatus(text) {</p>
-<p class="p1">      statusText.textContent = text;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function setCardImage(cardCode) {</p>
-<p class="p1">      frontImage.src = `cards/${cardCode}.png`;</p>
-<p class="p1">      frontImage.alt = cardCode;</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function showGlow() {</p>
-<p class="p1">      cardGlow.classList.add("active");</p>
-<p class="p1">      setTimeout(() =&gt; cardGlow.classList.remove("active"), 350);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function updateShufflePulse() {</p>
-<p class="p1">      if (drawPile.length === 0) {</p>
-<p class="p1">        shuffleBtn.classList.add("shuffle-alert");</p>
-<p class="p1">      } else {</p>
-<p class="p1">        shuffleBtn.classList.remove("shuffle-alert");</p>
-<p class="p1">      }</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function redrawCurrentCard() {</p>
-<p class="p1">      if (!currentCard) {</p>
-<p class="p1">        frontImage.src = "cards/BACK.png";</p>
-<p class="p1">        cardShell.classList.remove("is-flipped");</p>
-<p class="p1">        updateShufflePulse();</p>
-<p class="p1">        return;</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      setCardImage(currentCard);</p>
-<p class="p1">      cardShell.classList.add("is-flipped");</p>
-<p class="p1">      updateShufflePulse();</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function shuffleDeck() {</p>
-<p class="p1">      if (activeSuits.size === 0) {</p>
-<p class="p1">        setStatus("Select at least one suit.");</p>
-<p class="p1">        return;</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      drawPile = buildDeck();</p>
-<p class="p1">      drawHistory = [];</p>
-<p class="p1">      currentCard = null;</p>
-<p class="p1">      cardShell.classList.remove("is-flipped", "is-lifted");</p>
-<p class="p1">      frontImage.src = "cards/BACK.png";</p>
-<p class="p1">      setStatus(`Deck shuffled. ${drawPile.length} cards ready.`);</p>
-<p class="p1">      updateShufflePulse();</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function drawCard() {</p>
-<p class="p1">      if (drawPile.length === 0) {</p>
-<p class="p1">        setStatus("Deck empty. Shuffle to rebuild.");</p>
-<p class="p1">        updateShufflePulse();</p>
-<p class="p1">        return;</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      const nextCard = drawPile.pop();</p>
-<p class="p1">      drawHistory.push({</p>
-<p class="p1">        type: "draw",</p>
-<p class="p1">        card: nextCard,</p>
-<p class="p1">        previousCard: currentCard</p>
-<p class="p1">      });</p>
-<p class="p1">      currentCard = nextCard;</p>
-<p class="p2"><br></p>
-<p class="p1">      cardShell.classList.remove("is-flipped", "is-lifted");</p>
-<p class="p2"><br></p>
-<p class="p1">      setTimeout(() =&gt; {</p>
-<p class="p1">        setCardImage(nextCard);</p>
-<p class="p1">        cardShell.classList.add("is-flipped");</p>
-<p class="p1">        requestAnimationFrame(() =&gt; {</p>
-<p class="p1">          setTimeout(() =&gt; cardShell.classList.add("is-lifted"), 30);</p>
-<p class="p1">        });</p>
-<p class="p1">        const callout = getCallout(nextCard);</p>
-<p class="p1">        setStatus(callout);</p>
-<p class="p1">        showGlow();</p>
-<p class="p1">        speak(callout);</p>
-<p class="p1">        updateShufflePulse();</p>
-<p class="p1">      }, 90);</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function undoLastAction() {</p>
-<p class="p1">      if (drawHistory.length === 0) {</p>
-<p class="p1">        setStatus("Nothing to undo.");</p>
-<p class="p1">        return;</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      const lastAction = drawHistory.pop();</p>
-<p class="p2"><br></p>
-<p class="p1">      if (lastAction.type === "draw") {</p>
-<p class="p1">        drawPile.push(lastAction.card);</p>
-<p class="p1">        currentCard = lastAction.previousCard || null;</p>
-<p class="p2"><br></p>
-<p class="p1">        cardShell.classList.remove("is-lifted");</p>
-<p class="p1">        if (currentCard) {</p>
-<p class="p1">          setCardImage(currentCard);</p>
-<p class="p1">          cardShell.classList.add("is-flipped");</p>
-<p class="p1">          setStatus(`Undo complete. Back to ${getCallout(currentCard)}.`);</p>
-<p class="p1">        } else {</p>
-<p class="p1">          frontImage.src = "cards/BACK.png";</p>
-<p class="p1">          cardShell.classList.remove("is-flipped");</p>
-<p class="p1">          setStatus("Undo complete.");</p>
-<p class="p1">        }</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      updateShufflePulse();</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    function toggleSuit(suit, button) {</p>
-<p class="p1">      if (activeSuits.has(suit)) {</p>
-<p class="p1">        if (activeSuits.size === 1) {</p>
-<p class="p1">          setStatus("At least one suit must stay enabled.");</p>
-<p class="p1">          return;</p>
-<p class="p1">        }</p>
-<p class="p1">        activeSuits.delete(suit);</p>
-<p class="p1">        button.classList.remove("active");</p>
-<p class="p1">        button.classList.add("inactive");</p>
-<p class="p1">      } else {</p>
-<p class="p1">        activeSuits.add(suit);</p>
-<p class="p1">        button.classList.add("active");</p>
-<p class="p1">        button.classList.remove("inactive");</p>
-<p class="p1">      }</p>
-<p class="p2"><br></p>
-<p class="p1">      shuffleDeck();</p>
-<p class="p1">    }</p>
-<p class="p2"><br></p>
-<p class="p1">    suitButtons.forEach((button) =&gt; {</p>
-<p class="p1">      button.addEventListener("click", () =&gt; {</p>
-<p class="p1">        toggleSuit(button.dataset.suit, button);</p>
-<p class="p1">      });</p>
-<p class="p1">    });</p>
-<p class="p2"><br></p>
-<p class="p1">    duplicateInput.addEventListener("change", () =&gt; {</p>
-<p class="p1">      sanitizeDuplicateCount();</p>
-<p class="p1">      shuffleDeck();</p>
-<p class="p1">    });</p>
-<p class="p2"><br></p>
-<p class="p1">    drawBtn.addEventListener("click", drawCard);</p>
-<p class="p1">    shuffleBtn.addEventListener("click", shuffleDeck);</p>
-<p class="p1">    undoBtn.addEventListener("click", undoLastAction);</p>
-<p class="p2"><br></p>
-<p class="p1">    document.addEventListener("keydown", (event) =&gt; {</p>
-<p class="p1">      if (event.code === "Space" || event.code === "Enter") {</p>
-<p class="p1">        event.preventDefault();</p>
-<p class="p1">        drawCard();</p>
-<p class="p1">      }</p>
-<p class="p1">    });</p>
-<p class="p2"><br></p>
-<p class="p1">    shuffleDeck();</p>
-<p class="p1">  &lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div class="app">
+    <div class="topbar">
+      <div class="title">F3 DECK</div>
+      <div class="subtitle">Landscape-first • smooth card feel • suit filtering • universal undo</div>
+    </div>
+
+    <div class="controls">
+      <button class="suit-btn active" id="btnC" data-suit="C">♣️ CORE</button>
+      <button class="suit-btn active" id="btnD" data-suit="D">♦️ UPPER</button>
+      <button class="suit-btn active" id="btnH" data-suit="H">❤️ CARDIO</button>
+      <button class="suit-btn active" id="btnS" data-suit="S">♠️ LEGS</button>
+    </div>
+
+    <div class="settings-row">
+      <div class="field">
+        <label for="duplicateCount">Duplicates</label>
+        <input id="duplicateCount" type="number" min="1" max="20" value="1" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn primary" id="drawBtn">Draw Card</button>
+      <button class="action-btn" id="undoBtn">Undo</button>
+      <button class="action-btn" id="shuffleBtn">Shuffle</button>
+    </div>
+
+    <div class="status" id="statusText">Ready. Tap Shuffle to rebuild the deck from the enabled suits.</div>
+
+    <div class="table-area">
+      <div class="pile-column">
+        <div class="pile-label">DRAW PILE</div>
+        <button class="mini-card" id="drawPileCard" aria-label="Draw pile">
+          <img src="cards/BACK.png" alt="Card back" />
+        </button>
+      </div>
+
+      <div class="center-stage">
+        <div class="card-scene">
+          <div class="card3d" id="card3d">
+            <div class="card-face back">
+              <img src="cards/BACK.png" alt="Card back" />
+            </div>
+            <div class="card-face front">
+              <img id="frontImage" src="cards/BACK.png" alt="Current card" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pile-column">
+        <div class="pile-label">DISCARD</div>
+        <button class="mini-card" id="discardPileCard" aria-label="Discard pile">
+          <img id="discardTopImage" src="cards/BACK.png" alt="Discard top" />
+        </button>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div>Remaining: <b id="remainingCount">0</b></div>
+      <div>Discarded: <b id="discardCount">0</b></div>
+      <div>Current: <b id="currentLabel">—</b></div>
+    </div>
+  </div>
+
+  <script>
+    const CARD_BACK = "BACK.png";
+
+    const allCards = [
+      // Clubs / Core
+      { suit: "C", suitName: "clubs", rank: "2",  file: "2C.png",  label: "WWII SITUP" },
+      { suit: "C", suitName: "clubs", rank: "3",  file: "3C.png",  label: "HIGH, SLOW FLUTTER KICK" },
+      { suit: "C", suitName: "clubs", rank: "4",  file: "4C.png",  label: "HEELS TO HEAVEN" },
+      { suit: "C", suitName: "clubs", rank: "5",  file: "5C.png",  label: "OBLIQUE CRUNCH" },
+      { suit: "C", suitName: "clubs", rank: "6",  file: "6C.png",  label: "LOW PLANK" },
+      { suit: "C", suitName: "clubs", rank: "7",  file: "7C.png",  label: "LIL BABY CRUNCH" },
+      { suit: "C", suitName: "clubs", rank: "8",  file: "8C.png",  label: "LUGE" },
+      { suit: "C", suitName: "clubs", rank: "9",  file: "9C.png",  label: "HIGH PLANK" },
+      { suit: "C", suitName: "clubs", rank: "10", file: "10C.png", label: "ROSALITA" },
+      { suit: "C", suitName: "clubs", rank: "J",  file: "JC.png",  label: "SHOULDER TAP" },
+      { suit: "C", suitName: "clubs", rank: "Q",  file: "QC.png",  label: "FREDDIE MERCURY" },
+      { suit: "C", suitName: "clubs", rank: "K",  file: "KC.png",  label: "AMERICAN HAMMER" },
+      { suit: "C", suitName: "clubs", rank: "A",  file: "AC.png",  label: "FLUTTER KICK" },
+
+      // Diamonds / Upper
+      { suit: "D", suitName: "diamonds", rank: "2",  file: "2D.png",  label: "HAND CLAP MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "3",  file: "3D.png",  label: "CHUCK NORRIS MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "4",  file: "4D.png",  label: "CAROLINA DRY DOCK" },
+      { suit: "D", suitName: "diamonds", rank: "5",  file: "5D.png",  label: "HAND-RELEASE MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "6",  file: "6D.png",  label: "WIDE-ARM MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "7",  file: "7D.png",  label: "DERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "8",  file: "8D.png",  label: "MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "9",  file: "9D.png",  label: "RANGER MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "10", file: "10D.png", label: "INCLINE MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "J",  file: "JD.png",  label: "DIP" },
+      { suit: "D", suitName: "diamonds", rank: "Q",  file: "QD.png",  label: "DIAMOND MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "K",  file: "KD.png",  label: "MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "A",  file: "AD.png",  label: "ARM CIRCLE" },
+
+      // Hearts / Cardio
+      { suit: "H", suitName: "hearts", rank: "2",  file: "2H.png",  label: "SPRINT 200 M." },
+      { suit: "H", suitName: "hearts", rank: "3",  file: "3H.png",  label: "SPRINT 300 M." },
+      { suit: "H", suitName: "hearts", rank: "4",  file: "4H.png",  label: "SPRINT 400 M." },
+      { suit: "H", suitName: "hearts", rank: "5",  file: "5H.png",  label: "KARAOKE" },
+      { suit: "H", suitName: "hearts", rank: "6",  file: "6H.png",  label: "BACKWARD RUN" },
+      { suit: "H", suitName: "hearts", rank: "7",  file: "7H.png",  label: "BEAR CRAWL" },
+      { suit: "H", suitName: "hearts", rank: "8",  file: "8H.png",  label: "SQUAT THRUST" },
+      { suit: "H", suitName: "hearts", rank: "9",  file: "9H.png",  label: "HIGH KNEE" },
+      { suit: "H", suitName: "hearts", rank: "10", file: "10H.png", label: "BUTT KICK" },
+      { suit: "H", suitName: "hearts", rank: "J",  file: "JH.png",  label: "PLANK JACK" },
+      { suit: "H", suitName: "hearts", rank: "Q",  file: "QH.png",  label: "BURPEE" },
+      { suit: "H", suitName: "hearts", rank: "K",  file: "KH.png",  label: "MTN. CLIMBER" },
+      { suit: "H", suitName: "hearts", rank: "A",  file: "AH.png",  label: "SSH" },
+
+      // Spades / Legs
+      { suit: "S", suitName: "spades", rank: "2",  file: "2S.png",  label: "BULGARIAN SPLIT SQUAT" },
+      { suit: "S", suitName: "spades", rank: "3",  file: "3S.png",  label: "WOJO SQUAT" },
+      { suit: "S", suitName: "spades", rank: "4",  file: "4S.png",  label: "ALTERNATING SIDE SQUAT" },
+      { suit: "S", suitName: "spades", rank: "5",  file: "5S.png",  label: "STANDING LUNGE" },
+      { suit: "S", suitName: "spades", rank: "6",  file: "6S.png",  label: "JUMPING LUNGE" },
+      { suit: "S", suitName: "spades", rank: "7",  file: "7S.png",  label: "MONKEY HUMPER" },
+      { suit: "S", suitName: "spades", rank: "8",  file: "8S.png",  label: "BACKWARD LUNGE" },
+      { suit: "S", suitName: "spades", rank: "9",  file: "9S.png",  label: "LOW, SLOW SQUAT" },
+      { suit: "S", suitName: "spades", rank: "10", file: "10S.png", label: "LUNGE WALK 100 M." },
+      { suit: "S", suitName: "spades", rank: "J",  file: "JS.png",  label: "SMURF JACK" },
+      { suit: "S", suitName: "spades", rank: "Q",  file: "QS.png",  label: "MONKEY HUMPER" },
+      { suit: "S", suitName: "spades", rank: "K",  file: "KS.png",  label: "SQUAT" },
+      { suit: "S", suitName: "spades", rank: "A",  file: "AS.png",  label: "CALF RAISE" }
+    ];
+
+    const jokers = [
+      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "JOKER_1.png", label: "JOKER" },
+      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "JOKER_2.png", label: "JOKER" }
+    ];
+
+    const state = {
+      activeSuits: new Set(["C", "D", "H", "S"]),
+      duplicates: 1,
+      drawPile: [],
+      discardPile: [],
+      currentCard: null,
+      history: []
+    };
+
+    const els = {
+      btnC: document.getElementById("btnC"),
+      btnD: document.getElementById("btnD"),
+      btnH: document.getElementById("btnH"),
+      btnS: document.getElementById("btnS"),
+      duplicateCount: document.getElementById("duplicateCount"),
+      drawBtn: document.getElementById("drawBtn"),
+      undoBtn: document.getElementById("undoBtn"),
+      shuffleBtn: document.getElementById("shuffleBtn"),
+      statusText: document.getElementById("statusText"),
+      remainingCount: document.getElementById("remainingCount"),
+      discardCount: document.getElementById("discardCount"),
+      currentLabel: document.getElementById("currentLabel"),
+      frontImage: document.getElementById("frontImage"),
+      card3d: document.getElementById("card3d"),
+      discardTopImage: document.getElementById("discardTopImage"),
+      drawPileCard: document.getElementById("drawPileCard"),
+      discardPileCard: document.getElementById("discardPileCard")
+    };
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function cloneState() {
+      return {
+        activeSuits: Array.from(state.activeSuits),
+        duplicates: state.duplicates,
+        drawPile: state.drawPile.map(c => ({ ...c })),
+        discardPile: state.discardPile.map(c => ({ ...c })),
+        currentCard: state.currentCard ? { ...state.currentCard } : null
+      };
+    }
+
+    function pushHistory() {
+      state.history.push(cloneState());
+      if (state.history.length > 100) state.history.shift();
+    }
+
+    function restoreSnapshot(snapshot) {
+      state.activeSuits = new Set(snapshot.activeSuits);
+      state.duplicates = snapshot.duplicates;
+      state.drawPile = snapshot.drawPile.map(c => ({ ...c }));
+      state.discardPile = snapshot.discardPile.map(c => ({ ...c }));
+      state.currentCard = snapshot.currentCard ? { ...snapshot.currentCard } : null;
+      els.duplicateCount.value = state.duplicates;
+      renderSuitButtons();
+      render();
+    }
+
+    function rankSpeak(rank) {
+      if (rank === "A") return "ace";
+      if (rank === "K") return "king";
+      if (rank === "Q") return "queen";
+      if (rank === "J") return "jack";
+      return String(rank);
+    }
+
+    function buildAnnouncement(card) {
+      if (!card) return "";
+      if (card.suit === "JOKER") return "joker";
+      return `${rankSpeak(card.rank)} of ${card.suitName} ${card.label}`;
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window) || !text) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function setStatus(text) {
+      els.statusText.textContent = text;
+    }
+
+    function renderSuitButtons() {
+      ["C", "D", "H", "S"].forEach((suit) => {
+        const btn = document.getElementById(`btn${suit}`);
+        const active = state.activeSuits.has(suit);
+        btn.classList.toggle("active", active);
+        btn.classList.toggle("inactive", !active);
+      });
+    }
+
+    function renderCurrentCard() {
+      const file = state.currentCard ? state.currentCard.file : CARD_BACK;
+      els.frontImage.src = `cards/${file}`;
+      els.frontImage.alt = state.currentCard ? state.currentCard.label : "Current card";
+      if (state.currentCard) {
+        els.card3d.classList.add("flipped");
+      } else {
+        els.card3d.classList.remove("flipped");
+      }
+    }
+
+    function renderDiscardTop() {
+      const top = state.discardPile[state.discardPile.length - 1];
+      els.discardTopImage.src = top ? `cards/${top.file}` : `cards/${CARD_BACK}`;
+      els.discardTopImage.alt = top ? top.label : "Discard pile";
+    }
+
+    function renderCounts() {
+      els.remainingCount.textContent = state.drawPile.length;
+      els.discardCount.textContent = state.discardPile.length;
+      els.currentLabel.textContent = state.currentCard
+        ? (state.currentCard.suit === "JOKER" ? "JOKER" : `${state.currentCard.rank}${state.currentCard.suit} · ${state.currentCard.label}`)
+        : "—";
+    }
+
+    function renderShufflePulse() {
+      const needsShuffle = state.drawPile.length === 0;
+      els.shuffleBtn.classList.toggle("pulse", needsShuffle);
+    }
+
+    function render() {
+      renderSuitButtons();
+      renderCurrentCard();
+      renderDiscardTop();
+      renderCounts();
+      renderShufflePulse();
+      els.undoBtn.disabled = state.history.length === 0;
+      els.undoBtn.style.opacity = state.history.length === 0 ? "0.45" : "1";
+    }
+
+    function buildDeckFromSettings() {
+      const dup = Math.max(1, parseInt(els.duplicateCount.value, 10) || 1);
+      state.duplicates = dup;
+
+      const enabledCards = allCards.filter(card => state.activeSuits.has(card.suit));
+      const deck = [];
+
+      for (let i = 0; i < dup; i += 1) {
+        enabledCards.forEach(card => deck.push({ ...card }));
+        jokers.forEach(card => deck.push({ ...card }));
+      }
+
+      return shuffleArray(deck);
+    }
+
+    function shuffleDeck() {
+      if (state.activeSuits.size === 0) {
+        setStatus("Enable at least one suit before shuffling.");
+        return;
+      }
+      pushHistory();
+      state.drawPile = buildDeckFromSettings();
+      state.discardPile = [];
+      state.currentCard = null;
+      setStatus(`Shuffled ${state.drawPile.length} cards from the enabled suits.`);
+      render();
+    }
+
+    function animateReveal() {
+      els.card3d.classList.remove("reveal-pop");
+      void els.card3d.offsetWidth;
+      els.card3d.classList.add("reveal-pop");
+      setTimeout(() => {
+        els.card3d.classList.remove("reveal-pop");
+      }, 430);
+    }
+
+    function drawCard() {
+      if (state.drawPile.length === 0) {
+        setStatus("Deck empty. Tap Shuffle.");
+        renderShufflePulse();
+        return;
+      }
+
+      pushHistory();
+
+      if (state.currentCard) {
+        state.discardPile.push({ ...state.currentCard });
+      }
+
+      state.currentCard = state.drawPile.pop();
+      render();
+      animateReveal();
+      speak(buildAnnouncement(state.currentCard));
+
+      if (state.drawPile.length === 0) {
+        setStatus("Last card drawn. Tap Shuffle.");
+      } else {
+        setStatus(buildAnnouncement(state.currentCard));
+      }
+    }
+
+    function undoAction() {
+      const snapshot = state.history.pop();
+      if (!snapshot) return;
+      restoreSnapshot(snapshot);
+      setStatus("Undid previous action.");
+    }
+
+    function toggleSuit(suit) {
+      pushHistory();
+      if (state.activeSuits.has(suit)) {
+        state.activeSuits.delete(suit);
+      } else {
+        state.activeSuits.add(suit);
+      }
+      renderSuitButtons();
+      setStatus(`Enabled suits: ${Array.from(state.activeSuits).join(", ") || "none"}. Shuffle to rebuild.`);
+      render();
+    }
+
+    function openDiscardTop() {
+      const top = state.discardPile[state.discardPile.length - 1];
+      if (!top) return;
+      state.currentCard = { ...top };
+      render();
+      setStatus(`Viewing discard top: ${buildAnnouncement(top)}`);
+    }
+
+    els.btnC.addEventListener("click", () => toggleSuit("C"));
+    els.btnD.addEventListener("click", () => toggleSuit("D"));
+    els.btnH.addEventListener("click", () => toggleSuit("H"));
+    els.btnS.addEventListener("click", () => toggleSuit("S"));
+    els.drawBtn.addEventListener("click", drawCard);
+    els.shuffleBtn.addEventListener("click", shuffleDeck);
+    els.undoBtn.addEventListener("click", undoAction);
+    els.drawPileCard.addEventListener("click", drawCard);
+    els.discardPileCard.addEventListener("click", openDiscardTop);
+
+    els.duplicateCount.addEventListener("change", () => {
+      const clean = Math.max(1, Math.min(20, parseInt(els.duplicateCount.value, 10) || 1));
+      els.duplicateCount.value = clean;
+      state.duplicates = clean;
+      setStatus(`Duplicates set to ${clean}. Tap Shuffle to rebuild the deck.`);
+    });
+
+    render();
+  </script>
 </body>
 </html>
