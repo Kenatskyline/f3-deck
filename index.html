@@ -70,7 +70,7 @@
     .controls,
     .actions,
     .settings-row {
-      width: min(1400px, 100%);
+      width: min(1600px, 100%);
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -204,7 +204,7 @@
 
     .exercise-line {
       min-height: 1.4em;
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       font-weight: 900;
       text-align: center;
       text-shadow: 0 2px 10px rgba(0,0,0,0.25);
@@ -212,11 +212,11 @@
     }
 
     .table-area {
-      width: min(1500px, 100%);
+      width: min(1700px, 100%);
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      gap: clamp(20px, 5vw, 90px);
+      gap: clamp(20px, 5vw, 100px);
       margin-top: 4px;
     }
 
@@ -251,6 +251,9 @@
       object-fit: contain;
       display: block;
       border-radius: 18px;
+    }
+
+    .draw-pile-card img {
       filter: drop-shadow(0 12px 22px rgba(0,0,0,0.28));
     }
 
@@ -270,16 +273,19 @@
       justify-content: center;
       min-width: 0;
       flex-shrink: 0;
+      width: min(30vw, 320px);
+      aspect-ratio: 2.5 / 3.5;
     }
 
     .center-card-image {
-      width: min(30vw, 320px);
+      width: 100%;
       aspect-ratio: 2.5 / 3.5;
       object-fit: contain;
       display: block;
       border-radius: 20px;
       filter: drop-shadow(0 16px 28px rgba(0,0,0,0.30));
       transform: translateY(0) scale(1);
+      transition: opacity 180ms ease;
     }
 
     .center-card-image.reveal {
@@ -312,6 +318,50 @@
       100% { transform: scale(1) rotate(0deg); }
     }
 
+    .discard-pile-card {
+      position: relative;
+      overflow: visible;
+    }
+
+    .discard-pile-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      border-radius: 18px;
+    }
+
+    .discard-top-image {
+      z-index: 4;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.28));
+    }
+
+    .discard-layer {
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.18));
+      transition: opacity 180ms ease;
+    }
+
+    .discard-layer.show {
+      opacity: 1;
+    }
+
+    .discard-layer-1 {
+      transform: rotate(-6deg) translate(-8px, 2px);
+    }
+
+    .discard-layer-2 {
+      transform: rotate(5deg) translate(10px, -4px);
+    }
+
+    .discard-layer-3 {
+      transform: rotate(-3deg) translate(4px, 8px);
+    }
+
     .meta {
       display: flex;
       justify-content: center;
@@ -333,7 +383,7 @@
       }
 
       .pile-wrap,
-      .center-card-image {
+      .center-stage {
         width: min(28vw, 240px);
       }
 
@@ -352,10 +402,11 @@
 
       .table-area {
         flex-direction: column;
+        align-items: center;
       }
 
       .pile-wrap,
-      .center-card-image {
+      .center-stage {
         width: min(78vw, 320px);
       }
     }
@@ -386,25 +437,28 @@
       <button class="action-btn" id="shuffleBtn">Shuffle</button>
     </div>
 
-    <div class="status" id="statusText">Ready. Tap Shuffle to rebuild the deck from the enabled suits.</div>
-    <div class="exercise-line" id="exerciseLine">—</div>
+    <div class="status" id="statusText">Deck ready. Draw your first card.</div>
+    <div class="exercise-line" id="exerciseLine">Tap Draw</div>
 
     <div class="table-area">
       <div class="pile-wrap">
         <div class="pile-label">DRAW PILE</div>
-        <button class="pile-card" id="drawPileCard" aria-label="Draw pile">
+        <button class="pile-card draw-pile-card" id="drawPileCard" aria-label="Draw pile">
           <img id="drawPileImage" src="cards/BACK.png" alt="Card back" />
         </button>
       </div>
 
       <div class="center-stage">
-        <img id="centerCardImage" class="center-card-image" src="cards/BACK.png" alt="Current card" />
+        <img id="centerCardImage" class="center-card-image" src="" alt="Current card" />
       </div>
 
       <div class="pile-wrap">
         <div class="pile-label">DISCARD</div>
-        <button class="pile-card" id="discardPileCard" aria-label="Discard pile">
-          <img id="discardTopImage" src="cards/BACK.png" alt="Discard top" />
+        <button class="pile-card discard-pile-card" id="discardPileCard" aria-label="Discard pile">
+          <img class="discard-layer discard-layer-3" id="discardLayer3" src="cards/BACK.png" alt="" />
+          <img class="discard-layer discard-layer-2" id="discardLayer2" src="cards/BACK.png" alt="" />
+          <img class="discard-layer discard-layer-1" id="discardLayer1" src="cards/BACK.png" alt="" />
+          <img class="discard-top-image" id="discardTopImage" src="cards/BACK.png" alt="Discard top" />
         </button>
       </div>
     </div>
@@ -507,6 +561,9 @@
       currentLabel: document.getElementById("currentLabel"),
       centerCardImage: document.getElementById("centerCardImage"),
       discardTopImage: document.getElementById("discardTopImage"),
+      discardLayer1: document.getElementById("discardLayer1"),
+      discardLayer2: document.getElementById("discardLayer2"),
+      discardLayer3: document.getElementById("discardLayer3"),
       drawPileImage: document.getElementById("drawPileImage"),
       drawPileCard: document.getElementById("drawPileCard"),
       discardPileCard: document.getElementById("discardPileCard")
@@ -605,17 +662,47 @@
     }
 
     function renderCurrentCard() {
-      const file = state.currentCard ? state.currentCard.file : CARD_BACK;
-      const alt = state.currentCard ? state.currentCard.label : "Current card";
-      setSafeImage(els.centerCardImage, file, alt);
-      els.exerciseLine.textContent = state.currentCard ? state.currentCard.label : "—";
+      if (!state.currentCard) {
+        els.centerCardImage.src = "";
+        els.centerCardImage.alt = "Current card";
+        els.centerCardImage.style.opacity = "0";
+        els.exerciseLine.textContent = "Tap Draw";
+        return;
+      }
+
+      els.centerCardImage.style.opacity = "1";
+      setSafeImage(els.centerCardImage, state.currentCard.file, state.currentCard.label);
+      els.exerciseLine.textContent = state.currentCard.label;
     }
 
     function renderDiscardTop() {
-      const top = state.discardPile[state.discardPile.length - 1];
-      const file = top ? top.file : CARD_BACK;
-      const alt = top ? top.label : "Discard pile";
-      setSafeImage(els.discardTopImage, file, alt);
+      const pile = state.discardPile;
+      const top = pile[pile.length - 1];
+      const prev1 = pile[pile.length - 2];
+      const prev2 = pile[pile.length - 3];
+      const prev3 = pile[pile.length - 4];
+
+      if (top) {
+        setSafeImage(els.discardTopImage, top.file, top.label);
+      } else {
+        setSafeImage(els.discardTopImage, CARD_BACK, "Discard pile");
+      }
+
+      const layers = [
+        { el: els.discardLayer1, card: prev1 },
+        { el: els.discardLayer2, card: prev2 },
+        { el: els.discardLayer3, card: prev3 }
+      ];
+
+      layers.forEach(({ el, card }) => {
+        if (card) {
+          setSafeImage(el, card.file, "");
+          el.classList.add("show");
+        } else {
+          setSafeImage(el, CARD_BACK, "");
+          el.classList.remove("show");
+        }
+      });
     }
 
     function renderDrawPile() {
