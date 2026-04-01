@@ -70,7 +70,7 @@
     .controls,
     .actions,
     .settings-row {
-      width: min(1200px, 100%);
+      width: min(1400px, 100%);
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -202,21 +202,31 @@
       padding: 0 8px;
     }
 
+    .exercise-line {
+      min-height: 1.4em;
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+      padding: 0 8px;
+    }
+
     .table-area {
-      width: min(1200px, 100%);
+      width: min(1500px, 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(18px, 4vw, 60px);
+      gap: clamp(20px, 5vw, 90px);
       margin-top: 4px;
     }
 
     .pile-wrap {
-      width: 130px;
+      width: min(30vw, 320px);
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
     .pile-label {
@@ -232,7 +242,7 @@
       border: none;
       background: transparent;
       cursor: pointer;
-      border-radius: 14px;
+      border-radius: 18px;
     }
 
     .pile-card img {
@@ -240,8 +250,8 @@
       height: 100%;
       object-fit: contain;
       display: block;
-      border-radius: 14px;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.28));
+      border-radius: 18px;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.28));
     }
 
     .pile-card.bump img {
@@ -259,11 +269,11 @@
       align-items: center;
       justify-content: center;
       min-width: 0;
+      flex-shrink: 0;
     }
 
     .center-card-image {
-      width: min(34vw, 340px);
-      min-width: 230px;
+      width: min(30vw, 320px);
       aspect-ratio: 2.5 / 3.5;
       object-fit: contain;
       display: block;
@@ -322,13 +332,9 @@
         gap: 18px;
       }
 
-      .pile-wrap {
-        width: 100px;
-      }
-
+      .pile-wrap,
       .center-card-image {
-        width: min(52vw, 320px);
-        min-width: 180px;
+        width: min(28vw, 240px);
       }
 
       .suit-btn {
@@ -348,13 +354,9 @@
         flex-direction: column;
       }
 
-      .pile-wrap {
-        width: 110px;
-      }
-
+      .pile-wrap,
       .center-card-image {
         width: min(78vw, 320px);
-        min-width: 200px;
       }
     }
   </style>
@@ -385,12 +387,13 @@
     </div>
 
     <div class="status" id="statusText">Ready. Tap Shuffle to rebuild the deck from the enabled suits.</div>
+    <div class="exercise-line" id="exerciseLine">—</div>
 
     <div class="table-area">
       <div class="pile-wrap">
         <div class="pile-label">DRAW PILE</div>
         <button class="pile-card" id="drawPileCard" aria-label="Draw pile">
-          <img src="cards/BACK.png" alt="Card back" />
+          <img id="drawPileImage" src="cards/BACK.png" alt="Card back" />
         </button>
       </div>
 
@@ -498,14 +501,30 @@
       undoBtn: document.getElementById("undoBtn"),
       shuffleBtn: document.getElementById("shuffleBtn"),
       statusText: document.getElementById("statusText"),
+      exerciseLine: document.getElementById("exerciseLine"),
       remainingCount: document.getElementById("remainingCount"),
       discardCount: document.getElementById("discardCount"),
       currentLabel: document.getElementById("currentLabel"),
       centerCardImage: document.getElementById("centerCardImage"),
       discardTopImage: document.getElementById("discardTopImage"),
+      drawPileImage: document.getElementById("drawPileImage"),
       drawPileCard: document.getElementById("drawPileCard"),
       discardPileCard: document.getElementById("discardPileCard")
     };
+
+    function imagePath(file) {
+      return `cards/${file}`;
+    }
+
+    function setSafeImage(img, file, altText) {
+      img.onerror = null;
+      img.src = imagePath(file);
+      img.alt = altText || "";
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = imagePath(CARD_BACK);
+      };
+    }
 
     function shuffleArray(arr) {
       for (let i = arr.length - 1; i > 0; i -= 1) {
@@ -552,7 +571,7 @@
     function buildAnnouncement(card) {
       if (!card) return "";
       if (card.suit === "JOKER") return "joker";
-      return `${rankSpeak(card.rank)} of ${card.suitName} ${card.label}`;
+      return `${rankSpeak(card.rank)} of ${card.suitName}`;
     }
 
     function speak(text) {
@@ -587,14 +606,20 @@
 
     function renderCurrentCard() {
       const file = state.currentCard ? state.currentCard.file : CARD_BACK;
-      els.centerCardImage.src = `cards/${file}`;
-      els.centerCardImage.alt = state.currentCard ? state.currentCard.label : "Current card";
+      const alt = state.currentCard ? state.currentCard.label : "Current card";
+      setSafeImage(els.centerCardImage, file, alt);
+      els.exerciseLine.textContent = state.currentCard ? state.currentCard.label : "—";
     }
 
     function renderDiscardTop() {
       const top = state.discardPile[state.discardPile.length - 1];
-      els.discardTopImage.src = top ? `cards/${top.file}` : `cards/${CARD_BACK}`;
-      els.discardTopImage.alt = top ? top.label : "Discard pile";
+      const file = top ? top.file : CARD_BACK;
+      const alt = top ? top.label : "Discard pile";
+      setSafeImage(els.discardTopImage, file, alt);
+    }
+
+    function renderDrawPile() {
+      setSafeImage(els.drawPileImage, CARD_BACK, "Card back");
     }
 
     function renderCounts() {
@@ -612,6 +637,7 @@
 
     function render() {
       renderSuitButtons();
+      renderDrawPile();
       renderCurrentCard();
       renderDiscardTop();
       renderCounts();
@@ -666,7 +692,7 @@
       state.currentCard = state.drawPile.pop();
       render();
       restartAnimation(els.centerCardImage, "reveal", 450);
-      speak(buildAnnouncement(state.currentCard));
+      speak(state.currentCard ? state.currentCard.label : "");
 
       if (state.drawPile.length === 0) {
         setStatus("Last card drawn. Tap Shuffle.");
@@ -699,7 +725,7 @@
       if (!top) return;
       state.currentCard = { ...top };
       render();
-      setStatus(`Viewing discard top: ${buildAnnouncement(top)}`);
+      setStatus(`Viewing discard top: ${top.label}`);
     }
 
     els.btnC.addEventListener("click", () => toggleSuit("C"));
