@@ -1,97 +1,885 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F3 Deck</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#14532d" />
+  <title>F3 Deck</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-body {
-  margin: 0;
-  background: #0b0b0b;
-  color: white;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
 
-#app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  position: relative;
-}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 45%),
+        radial-gradient(circle at center, #1f7a3d 0%, #14532d 45%, #0b3d11 100%);
+    }
 
-.card {
-  width: 220px;
-  height: 320px;
-  position: absolute;
-  transition: transform 0.4s ease;
-}
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.05) 0px,
+          rgba(255,255,255,0.05) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      z-index: 0;
+    }
 
-#draw {
-  left: 20%;
-}
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      min-height: 100vh;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
 
-#discard {
-  right: 20%;
-}
+    .title {
+      font-size: 1.95rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
 
-button {
-  position: absolute;
-  bottom: 40px;
-  padding: 14px 24px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  background: white;
-  color: black;
-}
-</style>
+    .subtitle {
+      font-size: 0.95rem;
+      opacity: 0.92;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.28);
+    }
+
+    .controls,
+    .actions,
+    .settings-row {
+      width: min(1600px, 100%);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .suit-btn,
+    .action-btn,
+    .pile-card {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .suit-btn,
+    .action-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        box-shadow 220ms ease,
+        opacity 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease;
+      font-weight: 800;
+    }
+
+    .suit-btn:active,
+    .action-btn:active,
+    .pile-card:active {
+      transform: scale(0.97);
+    }
+
+    .suit-btn {
+      background: rgba(255,255,255,0.13);
+      color: #fff;
+      min-width: 132px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .suit-btn.active {
+      background: rgba(255,255,255,0.96);
+      color: #111;
+      box-shadow:
+        0 0 14px rgba(255,255,255,0.35),
+        0 8px 24px rgba(0,0,0,0.22);
+    }
+
+    .suit-btn.inactive {
+      opacity: 0.45;
+      transform: scale(0.98);
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .field label {
+      font-size: 0.95rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .field input[type="number"] {
+      width: 74px;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.96);
+      color: #111;
+      outline: none;
+    }
+
+    .action-btn {
+      background: rgba(0,0,0,0.34);
+      color: #fff;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        0 8px 20px rgba(0,0,0,0.22);
+    }
+
+    .action-btn.primary {
+      background: rgba(255,255,255,0.96);
+      color: #111;
+    }
+
+    .action-btn.pulse {
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%,100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 rgba(255,255,255,0),
+          inset 0 0 0 1px rgba(255,255,255,0.08),
+          0 8px 20px rgba(0,0,0,0.22);
+      }
+      50% {
+        transform: scale(1.04);
+        box-shadow:
+          0 0 22px rgba(255,255,255,0.55),
+          inset 0 0 0 1px rgba(255,255,255,0.08),
+          0 8px 20px rgba(0,0,0,0.22);
+      }
+    }
+
+    .status {
+      min-height: 1.3em;
+      font-size: 0.95rem;
+      text-align: center;
+      opacity: 0.95;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+      padding: 0 8px;
+    }
+
+    .exercise-line {
+      min-height: 1.4em;
+      font-size: 1.45rem;
+      font-weight: 900;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+      padding: 0 8px;
+    }
+
+    .table-area {
+      width: min(1700px, 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: clamp(20px, 5vw, 100px);
+      margin-top: 4px;
+    }
+
+    .pile-wrap {
+      width: min(30vw, 320px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .pile-label {
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .pile-card {
+      width: 100%;
+      aspect-ratio: 2.5 / 3.5;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 18px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .pile-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      border-radius: 18px;
+    }
+
+    .draw-pile-card img {
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.28));
+    }
+
+    .pile-card.bump img {
+      animation: pileBump 380ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    @keyframes pileBump {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-4px) scale(1.03); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    .center-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      flex-shrink: 0;
+      width: min(30vw, 320px);
+      aspect-ratio: 2.5 / 3.5;
+    }
+
+    .center-card-image {
+      width: 100%;
+      aspect-ratio: 2.5 / 3.5;
+      object-fit: contain;
+      display: block;
+      border-radius: 20px;
+      filter: drop-shadow(0 16px 28px rgba(0,0,0,0.30));
+      transform: translateY(0) scale(1);
+      transition: opacity 180ms ease;
+    }
+
+    .center-card-image.reveal {
+      animation: cardReveal 420ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    .center-card-image.shuffle-bump {
+      animation: shuffleBump 380ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    @keyframes cardReveal {
+      0% {
+        transform: translateY(12px) scale(0.94);
+        filter: drop-shadow(0 8px 18px rgba(0,0,0,0.20));
+      }
+      45% {
+        transform: translateY(-6px) scale(1.03);
+        filter: drop-shadow(0 20px 34px rgba(0,0,0,0.34)) drop-shadow(0 0 18px rgba(255,255,255,0.18));
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 16px 28px rgba(0,0,0,0.30));
+      }
+    }
+
+    @keyframes shuffleBump {
+      0% { transform: scale(1) rotate(0deg); }
+      35% { transform: scale(1.03) rotate(-1deg); }
+      70% { transform: scale(0.985) rotate(1deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .discard-pile-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      border-radius: 18px;
+    }
+
+    .discard-top-image {
+      z-index: 4;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.28));
+    }
+
+    .discard-layer {
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.18));
+      transition: opacity 180ms ease;
+    }
+
+    .discard-layer.show {
+      opacity: 1;
+    }
+
+    .discard-layer-1 { transform: rotate(-6deg) translate(-8px, 2px); }
+    .discard-layer-2 { transform: rotate(5deg) translate(10px, -4px); }
+    .discard-layer-3 { transform: rotate(-3deg) translate(4px, 8px); }
+
+    .meta {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+      text-align: center;
+      opacity: 0.96;
+      padding: 0 8px;
+    }
+
+    .meta b {
+      font-weight: 900;
+    }
+
+    @media (max-width: 900px) {
+      .table-area { gap: 18px; }
+      .pile-wrap, .center-stage { width: min(28vw, 240px); }
+      .suit-btn { min-width: 110px; padding: 10px 12px; }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        justify-content: flex-start;
+        padding-top: 24px;
+        padding-bottom: 24px;
+      }
+
+      .table-area {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .pile-wrap, .center-stage {
+        width: min(78vw, 320px);
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <div class="title">F3 DECK</div>
+    <div class="subtitle">Landscape-first • smooth card feel • suit filtering • universal undo</div>
 
-<div id="app">
-  <img id="draw" class="card" src="cards/back.png">
-  <img id="discard" class="card" src="">
-  <button onclick="drawCard()">DRAW</button>
-</div>
+    <div class="controls">
+      <button class="suit-btn active" id="btnC">♣️ CORE</button>
+      <button class="suit-btn active" id="btnD">♦️ UPPER</button>
+      <button class="suit-btn active" id="btnH">❤️ CARDIO</button>
+      <button class="suit-btn active" id="btnS">♠️ LEGS</button>
+    </div>
 
-<script>
-const suits = ["S","H","D","C"];
-const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+    <div class="settings-row">
+      <div class="field">
+        <label for="duplicateCount">Duplicates</label>
+        <input id="duplicateCount" type="number" min="1" max="20" value="1" />
+      </div>
+    </div>
 
-let deck = [];
+    <div class="actions">
+      <button class="action-btn primary" id="drawBtn">Draw Card</button>
+      <button class="action-btn" id="undoBtn">Undo</button>
+      <button class="action-btn" id="shuffleBtn">Shuffle</button>
+    </div>
 
-function buildDeck() {
-  deck = [];
-  suits.forEach(s => {
-    values.forEach(v => {
-      deck.push(v + s);
+    <div class="status" id="statusText">Deck ready. Draw your first card.</div>
+    <div class="exercise-line" id="exerciseLine">Tap Draw</div>
+
+    <div class="table-area">
+      <div class="pile-wrap">
+        <div class="pile-label">DRAW PILE</div>
+        <button class="pile-card draw-pile-card" id="drawPileCard" aria-label="Draw pile">
+          <img id="drawPileImage" src="" alt="Card back" />
+        </button>
+      </div>
+
+      <div class="center-stage">
+        <img id="centerCardImage" class="center-card-image" src="" alt="Current card" />
+      </div>
+
+      <div class="pile-wrap">
+        <div class="pile-label">DISCARD</div>
+        <button class="pile-card discard-pile-card" id="discardPileCard" aria-label="Discard pile">
+          <img class="discard-layer discard-layer-3" id="discardLayer3" src="" alt="" />
+          <img class="discard-layer discard-layer-2" id="discardLayer2" src="" alt="" />
+          <img class="discard-layer discard-layer-1" id="discardLayer1" src="" alt="" />
+          <img class="discard-top-image" id="discardTopImage" src="" alt="Discard top" />
+        </button>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div>Remaining: <b id="remainingCount">0</b></div>
+      <div>Discarded: <b id="discardCount">0</b></div>
+      <div>Current: <b id="currentLabel">—</b></div>
+    </div>
+  </div>
+
+  <script>
+    const CARD_BACK_BASENAME = "back";
+
+    const allCards = [
+      { suit: "C", suitName: "clubs", rank: "A",  file: "AC.png",  label: "FLUTTER KICK" },
+      { suit: "C", suitName: "clubs", rank: "2",  file: "2C.png",  label: "WWII SITUP" },
+      { suit: "C", suitName: "clubs", rank: "3",  file: "3C.png",  label: "HIGH, SLOW FLUTTER KICK" },
+      { suit: "C", suitName: "clubs", rank: "4",  file: "4C.png",  label: "HEELS TO HEAVEN" },
+      { suit: "C", suitName: "clubs", rank: "5",  file: "5C.png",  label: "OBLIQUE CRUNCH" },
+      { suit: "C", suitName: "clubs", rank: "6",  file: "6C.png",  label: "LOW PLANK" },
+      { suit: "C", suitName: "clubs", rank: "7",  file: "7C.png",  label: "LIL BABY CRUNCH" },
+      { suit: "C", suitName: "clubs", rank: "8",  file: "8C.png",  label: "LUGE" },
+      { suit: "C", suitName: "clubs", rank: "9",  file: "9C.png",  label: "HIGH PLANK" },
+      { suit: "C", suitName: "clubs", rank: "10", file: "10C.png", label: "ROSALITA" },
+      { suit: "C", suitName: "clubs", rank: "J",  file: "JC.png",  label: "SHOULDER TAP" },
+      { suit: "C", suitName: "clubs", rank: "Q",  file: "QC.png",  label: "FREDDIE MERCURY" },
+      { suit: "C", suitName: "clubs", rank: "K",  file: "KC.png",  label: "AMERICAN HAMMER" },
+
+      { suit: "D", suitName: "diamonds", rank: "A",  file: "AD.png",  label: "ARM CIRCLE" },
+      { suit: "D", suitName: "diamonds", rank: "2",  file: "2D.png",  label: "HAND CLAP MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "3",  file: "3D.png",  label: "CHUCK NORRIS MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "4",  file: "4D.png",  label: "CAROLINA DRY DOCK" },
+      { suit: "D", suitName: "diamonds", rank: "5",  file: "5D.png",  label: "HAND-RELEASE MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "6",  file: "6D.png",  label: "WIDE-ARM MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "7",  file: "7D.png",  label: "DERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "8",  file: "8D.png",  label: "MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "9",  file: "9D.png",  label: "RANGER MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "10", file: "10D.png", label: "INCLINE MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "J",  file: "JD.png",  label: "DIP" },
+      { suit: "D", suitName: "diamonds", rank: "Q",  file: "QD.png",  label: "DIAMOND MERKIN" },
+      { suit: "D", suitName: "diamonds", rank: "K",  file: "KD.png",  label: "MERKIN" },
+
+      { suit: "H", suitName: "hearts", rank: "A",  file: "AH.png",  label: "SSH" },
+      { suit: "H", suitName: "hearts", rank: "2",  file: "2H.png",  label: "SPRINT 200 M." },
+      { suit: "H", suitName: "hearts", rank: "3",  file: "3H.png",  label: "SPRINT 300 M." },
+      { suit: "H", suitName: "hearts", rank: "4",  file: "4H.png",  label: "SPRINT 400 M." },
+      { suit: "H", suitName: "hearts", rank: "5",  file: "5H.png",  label: "KARAOKE" },
+      { suit: "H", suitName: "hearts", rank: "6",  file: "6H.png",  label: "BACKWARD RUN" },
+      { suit: "H", suitName: "hearts", rank: "7",  file: "7H.png",  label: "BEAR CRAWL" },
+      { suit: "H", suitName: "hearts", rank: "8",  file: "8H.png",  label: "SQUAT THRUST" },
+      { suit: "H", suitName: "hearts", rank: "9",  file: "9H.png",  label: "HIGH KNEE" },
+      { suit: "H", suitName: "hearts", rank: "10", file: "10H.png", label: "BUTT KICK" },
+      { suit: "H", suitName: "hearts", rank: "J",  file: "JH.png",  label: "PLANK JACK" },
+      { suit: "H", suitName: "hearts", rank: "Q",  file: "QH.png",  label: "BURPEE" },
+      { suit: "H", suitName: "hearts", rank: "K",  file: "KH.png",  label: "MTN. CLIMBER" },
+
+      { suit: "S", suitName: "spades", rank: "A",  file: "AS.png",  label: "CALF RAISE" },
+      { suit: "S", suitName: "spades", rank: "2",  file: "A2.png",  label: "BULGARIAN SPLIT SQUAT" },
+      { suit: "S", suitName: "spades", rank: "3",  file: "A3.png",  label: "WOJO SQUAT" },
+      { suit: "S", suitName: "spades", rank: "4",  file: "A4.png",  label: "ALTERNATING SIDE SQUAT" },
+      { suit: "S", suitName: "spades", rank: "5",  file: "A5.png",  label: "STANDING LUNGE" },
+      { suit: "S", suitName: "spades", rank: "6",  file: "A6.png",  label: "JUMPING LUNGE" },
+      { suit: "S", suitName: "spades", rank: "7",  file: "A7.png",  label: "MONKEY HUMPER" },
+      { suit: "S", suitName: "spades", rank: "8",  file: "A8.png",  label: "BACKWARD LUNGE" },
+      { suit: "S", suitName: "spades", rank: "9",  file: "A9.png",  label: "LOW, SLOW SQUAT" },
+      { suit: "S", suitName: "spades", rank: "10", file: "A10.png", label: "LUNGE WALK 100 M." },
+      { suit: "S", suitName: "spades", rank: "J",  file: "AJ.png",  label: "SMURF JACK" },
+      { suit: "S", suitName: "spades", rank: "Q",  file: "AQ.png",  label: "MONKEY HUMPER" },
+      { suit: "S", suitName: "spades", rank: "K",  file: "AK.png",  label: "SQUAT" }
+    ];
+
+    const jokers = [
+      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "joker_1.png", label: "JOKER" },
+      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "joker_2.png", label: "JOKER" }
+    ];
+
+    const state = {
+      activeSuits: new Set(["C", "D", "H", "S"]),
+      duplicates: 1,
+      drawPile: [],
+      discardPile: [],
+      currentCard: null,
+      history: [],
+      resolvedBackPath: null
+    };
+
+    const els = {
+      btnC: document.getElementById("btnC"),
+      btnD: document.getElementById("btnD"),
+      btnH: document.getElementById("btnH"),
+      btnS: document.getElementById("btnS"),
+      duplicateCount: document.getElementById("duplicateCount"),
+      drawBtn: document.getElementById("drawBtn"),
+      undoBtn: document.getElementById("undoBtn"),
+      shuffleBtn: document.getElementById("shuffleBtn"),
+      statusText: document.getElementById("statusText"),
+      exerciseLine: document.getElementById("exerciseLine"),
+      remainingCount: document.getElementById("remainingCount"),
+      discardCount: document.getElementById("discardCount"),
+      currentLabel: document.getElementById("currentLabel"),
+      centerCardImage: document.getElementById("centerCardImage"),
+      discardTopImage: document.getElementById("discardTopImage"),
+      discardLayer1: document.getElementById("discardLayer1"),
+      discardLayer2: document.getElementById("discardLayer2"),
+      discardLayer3: document.getElementById("discardLayer3"),
+      drawPileImage: document.getElementById("drawPileImage"),
+      drawPileCard: document.getElementById("drawPileCard"),
+      discardPileCard: document.getElementById("discardPileCard")
+    };
+
+    function cardCandidates(file) {
+      const lower = String(file).replace(/\.PNG$/i, ".png");
+      const upper = String(file).replace(/\.png$/i, ".PNG");
+      const unique = [];
+      [
+        `/cards/${file}`,
+        `cards/${file}`,
+        `/cards/${lower}`,
+        `cards/${lower}`,
+        `/cards/${upper}`,
+        `cards/${upper}`
+      ].forEach(path => {
+        if (!unique.includes(path)) unique.push(path);
+      });
+      return unique;
+    }
+
+    function basenameCandidates(nameWithoutExt) {
+      return cardCandidates(`${nameWithoutExt}.png`);
+    }
+
+    function loadFirstWorking(img, candidates, altText, fallbackCandidates = []) {
+      const queue = [...candidates];
+      img.alt = altText || "";
+
+      function tryNext() {
+        if (!queue.length) {
+          if (fallbackCandidates.length) {
+            loadFirstWorking(img, fallbackCandidates, altText, []);
+          } else {
+            img.removeAttribute("src");
+          }
+          return;
+        }
+        const src = queue.shift();
+        img.onerror = tryNext;
+        img.src = src;
+      }
+
+      tryNext();
+    }
+
+    function resolveBackImage(callback) {
+      if (state.resolvedBackPath) {
+        callback(state.resolvedBackPath);
+        return;
+      }
+
+      const candidates = basenameCandidates(CARD_BACK_BASENAME);
+      const tester = new Image();
+      let index = 0;
+
+      function tryNext() {
+        if (index >= candidates.length) {
+          state.resolvedBackPath = candidates[0];
+          callback(state.resolvedBackPath);
+          return;
+        }
+        const src = candidates[index++];
+        tester.onload = () => {
+          state.resolvedBackPath = src;
+          callback(src);
+        };
+        tester.onerror = tryNext;
+        tester.src = src;
+      }
+
+      tryNext();
+    }
+
+    function setCardImage(img, file, altText) {
+      loadFirstWorking(img, cardCandidates(file), altText, basenameCandidates(CARD_BACK_BASENAME));
+    }
+
+    function setBackImage(img, altText) {
+      resolveBackImage((src) => {
+        img.onerror = null;
+        img.alt = altText || "Card back";
+        img.src = src;
+      });
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function cloneState() {
+      return {
+        activeSuits: Array.from(state.activeSuits),
+        duplicates: state.duplicates,
+        drawPile: state.drawPile.map(c => ({ ...c })),
+        discardPile: state.discardPile.map(c => ({ ...c })),
+        currentCard: state.currentCard ? { ...state.currentCard } : null
+      };
+    }
+
+    function pushHistory() {
+      state.history.push(cloneState());
+      if (state.history.length > 100) state.history.shift();
+    }
+
+    function restoreSnapshot(snapshot) {
+      state.activeSuits = new Set(snapshot.activeSuits);
+      state.duplicates = snapshot.duplicates;
+      state.drawPile = snapshot.drawPile.map(c => ({ ...c }));
+      state.discardPile = snapshot.discardPile.map(c => ({ ...c }));
+      state.currentCard = snapshot.currentCard ? { ...snapshot.currentCard } : null;
+      els.duplicateCount.value = state.duplicates;
+      renderSuitButtons();
+      render();
+    }
+
+    function rankSpeak(rank) {
+      if (rank === "A") return "ace";
+      if (rank === "K") return "king";
+      if (rank === "Q") return "queen";
+      if (rank === "J") return "jack";
+      return String(rank);
+    }
+
+    function buildAnnouncement(card) {
+      if (!card) return "";
+      if (card.suit === "JOKER") return "joker";
+      return `${rankSpeak(card.rank)} of ${card.suitName}`;
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window) || !text) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function setStatus(text) {
+      els.statusText.textContent = text;
+    }
+
+    function restartAnimation(el, className, duration = 450) {
+      el.classList.remove(className);
+      void el.offsetWidth;
+      el.classList.add(className);
+      setTimeout(() => el.classList.remove(className), duration);
+    }
+
+    function renderSuitButtons() {
+      ["C", "D", "H", "S"].forEach((suit) => {
+        const btn = document.getElementById(`btn${suit}`);
+        const active = state.activeSuits.has(suit);
+        btn.classList.toggle("active", active);
+        btn.classList.toggle("inactive", !active);
+      });
+    }
+
+    function renderCurrentCard() {
+      if (!state.currentCard) {
+        els.centerCardImage.removeAttribute("src");
+        els.centerCardImage.alt = "Current card";
+        els.centerCardImage.style.opacity = "0";
+        els.exerciseLine.textContent = "Tap Draw";
+        return;
+      }
+
+      els.centerCardImage.style.opacity = "1";
+      setCardImage(els.centerCardImage, state.currentCard.file, state.currentCard.label);
+      els.exerciseLine.textContent = state.currentCard.label;
+    }
+
+    function renderDiscardTop() {
+      const pile = state.discardPile;
+      const top = pile[pile.length - 1];
+      const prev1 = pile[pile.length - 2];
+      const prev2 = pile[pile.length - 3];
+      const prev3 = pile[pile.length - 4];
+
+      if (top) {
+        setCardImage(els.discardTopImage, top.file, top.label);
+      } else {
+        setBackImage(els.discardTopImage, "Discard pile");
+      }
+
+      const layers = [
+        { el: els.discardLayer1, card: prev1 },
+        { el: els.discardLayer2, card: prev2 },
+        { el: els.discardLayer3, card: prev3 }
+      ];
+
+      layers.forEach(({ el, card }) => {
+        if (card) {
+          setCardImage(el, card.file, "");
+          el.classList.add("show");
+        } else {
+          setBackImage(el, "");
+          el.classList.remove("show");
+        }
+      });
+    }
+
+    function renderDrawPile() {
+      setBackImage(els.drawPileImage, "Card back");
+    }
+
+    function renderCounts() {
+      els.remainingCount.textContent = state.drawPile.length;
+      els.discardCount.textContent = state.discardPile.length;
+      els.currentLabel.textContent = state.currentCard
+        ? (state.currentCard.suit === "JOKER" ? "JOKER" : `${state.currentCard.rank}${state.currentCard.suit} • ${state.currentCard.label}`)
+        : "—";
+    }
+
+    function renderShufflePulse() {
+      const needsShuffle = state.drawPile.length === 0;
+      els.shuffleBtn.classList.toggle("pulse", needsShuffle);
+    }
+
+    function render() {
+      renderSuitButtons();
+      renderDrawPile();
+      renderCurrentCard();
+      renderDiscardTop();
+      renderCounts();
+      renderShufflePulse();
+      els.undoBtn.disabled = state.history.length === 0;
+      els.undoBtn.style.opacity = state.history.length === 0 ? "0.45" : "1";
+    }
+
+    function buildDeckFromSettings() {
+      const dup = Math.max(1, parseInt(els.duplicateCount.value, 10) || 1);
+      state.duplicates = dup;
+      const enabledCards = allCards.filter(card => state.activeSuits.has(card.suit));
+      const deck = [];
+
+      for (let i = 0; i < dup; i += 1) {
+        enabledCards.forEach(card => deck.push({ ...card }));
+        jokers.forEach(card => deck.push({ ...card }));
+      }
+
+      return shuffleArray(deck);
+    }
+
+    function shuffleDeck() {
+      if (state.activeSuits.size === 0) {
+        setStatus("Enable at least one suit before shuffling.");
+        return;
+      }
+
+      pushHistory();
+      state.drawPile = buildDeckFromSettings();
+      state.discardPile = [];
+      state.currentCard = null;
+      render();
+      setStatus(`Shuffled ${state.drawPile.length} cards from the enabled suits.`);
+      restartAnimation(els.drawPileCard, "bump", 400);
+    }
+
+    function drawCard() {
+      if (state.drawPile.length === 0) {
+        setStatus("Deck empty. Tap Shuffle.");
+        renderShufflePulse();
+        return;
+      }
+
+      pushHistory();
+
+      if (state.currentCard) {
+        state.discardPile.push({ ...state.currentCard });
+      }
+
+      state.currentCard = state.drawPile.pop();
+      render();
+      restartAnimation(els.centerCardImage, "reveal", 450);
+      speak(state.currentCard ? state.currentCard.label : "");
+
+      if (state.drawPile.length === 0) {
+        setStatus("Last card drawn. Tap Shuffle.");
+      } else {
+        setStatus(buildAnnouncement(state.currentCard));
+      }
+    }
+
+    function undoAction() {
+      const snapshot = state.history.pop();
+      if (!snapshot) return;
+      restoreSnapshot(snapshot);
+      setStatus("Undid previous action.");
+    }
+
+    function toggleSuit(suit) {
+      pushHistory();
+      if (state.activeSuits.has(suit)) {
+        state.activeSuits.delete(suit);
+      } else {
+        state.activeSuits.add(suit);
+      }
+      renderSuitButtons();
+      render();
+      setStatus(`Enabled suits: ${Array.from(state.activeSuits).join(", ") || "none"}. Shuffle to rebuild.`);
+    }
+
+    function openDiscardTop() {
+      const top = state.discardPile[state.discardPile.length - 1];
+      if (!top) return;
+      state.currentCard = { ...top };
+      render();
+      setStatus(`Viewing discard top: ${top.label}`);
+    }
+
+    els.btnC.addEventListener("click", () => toggleSuit("C"));
+    els.btnD.addEventListener("click", () => toggleSuit("D"));
+    els.btnH.addEventListener("click", () => toggleSuit("H"));
+    els.btnS.addEventListener("click", () => toggleSuit("S"));
+
+    els.drawBtn.addEventListener("click", drawCard);
+    els.shuffleBtn.addEventListener("click", shuffleDeck);
+    els.undoBtn.addEventListener("click", undoAction);
+    els.drawPileCard.addEventListener("click", drawCard);
+    els.discardPileCard.addEventListener("click", openDiscardTop);
+
+    els.duplicateCount.addEventListener("change", () => {
+      const clean = Math.max(1, Math.min(20, parseInt(els.duplicateCount.value, 10) || 1));
+      els.duplicateCount.value = clean;
+      state.duplicates = clean;
+      setStatus(`Duplicates set to ${clean}. Tap Shuffle to rebuild the deck.`);
     });
-  });
-}
 
-function drawCard() {
-  if (deck.length === 0) buildDeck();
-
-  const index = Math.floor(Math.random() * deck.length);
-  const card = deck.splice(index, 1)[0];
-
-  const img = document.getElementById("discard");
-  img.src = "cards/" + card + ".PNG";
-
-  speak(card);
-}
-
-function speak(card) {
-  const msg = new SpeechSynthesisUtterance(card);
-  speechSynthesis.speak(msg);
-}
-
-buildDeck();
-</script>
-
+    render();
+  </script>
 </body>
 </html>
