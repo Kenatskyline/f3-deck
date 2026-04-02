@@ -288,6 +288,7 @@
       filter: drop-shadow(0 16px 28px rgba(0,0,0,0.30));
       transform: translateY(0) scale(1);
       transition: opacity 180ms ease;
+      opacity: 0;
     }
 
     .center-card-image.reveal {
@@ -411,7 +412,7 @@
       <div class="pile-wrap">
         <div class="pile-label">DRAW PILE</div>
         <button class="pile-card draw-pile-card" id="drawPileCard" aria-label="Draw pile">
-          <img id="drawPileImage" src="" alt="Card back" />
+          <img id="drawPileImage" src="/cards/BACK.png" alt="Card back" />
         </button>
       </div>
 
@@ -422,10 +423,10 @@
       <div class="pile-wrap">
         <div class="pile-label">DISCARD</div>
         <button class="pile-card discard-pile-card" id="discardPileCard" aria-label="Discard pile">
-          <img class="discard-layer discard-layer-3" id="discardLayer3" src="" alt="" />
-          <img class="discard-layer discard-layer-2" id="discardLayer2" src="" alt="" />
-          <img class="discard-layer discard-layer-1" id="discardLayer1" src="" alt="" />
-          <img class="discard-top-image" id="discardTopImage" src="" alt="Discard top" />
+          <img class="discard-layer discard-layer-3" id="discardLayer3" src="/cards/BACK.png" alt="" />
+          <img class="discard-layer discard-layer-2" id="discardLayer2" src="/cards/BACK.png" alt="" />
+          <img class="discard-layer discard-layer-1" id="discardLayer1" src="/cards/BACK.png" alt="" />
+          <img class="discard-top-image" id="discardTopImage" src="/cards/BACK.png" alt="Discard top" />
         </button>
       </div>
     </div>
@@ -438,7 +439,7 @@
   </div>
 
   <script>
-    const CARD_BACK_FILE = "BACK.png";
+    const CARD_BACK_SRC = "/cards/BACK.png";
 
     const allCards = [
       { suit: "C", suitName: "clubs", rank: "A",  file: "AC.png",  label: "FLUTTER KICK" },
@@ -509,8 +510,7 @@
       drawPile: [],
       discardPile: [],
       currentCard: null,
-      history: [],
-      resolvedBackPath: null
+      history: []
     };
 
     const els = {
@@ -537,86 +537,20 @@
       discardPileCard: document.getElementById("discardPileCard")
     };
 
-    function cardCandidates(file) {
-      const lower = String(file).replace(/\.PNG$/i, ".png");
-      const upper = String(file).replace(/\.png$/i, ".PNG");
-      const unique = [];
-      [
-        `/cards/${file}`,
-        `cards/${file}`,
-        `/cards/${lower}`,
-        `cards/${lower}`,
-        `/cards/${upper}`,
-        `cards/${upper}`
-      ].forEach(path => {
-        if (!unique.includes(path)) unique.push(path);
-      });
-      return unique;
-    }
-
-    function backCandidates() {
-      return cardCandidates(CARD_BACK_FILE);
-    }
-
-    function loadFirstWorking(img, candidates, altText, fallbackCandidates = []) {
-      const queue = [...candidates];
-      img.alt = altText || "";
-
-      function tryNext() {
-        if (!queue.length) {
-          if (fallbackCandidates.length) {
-            loadFirstWorking(img, fallbackCandidates, altText, []);
-          } else {
-            img.removeAttribute("src");
-          }
-          return;
-        }
-        const src = queue.shift();
-        img.onerror = tryNext;
-        img.src = src;
-      }
-
-      tryNext();
-    }
-
-    function resolveBackImage(callback) {
-      if (state.resolvedBackPath) {
-        callback(state.resolvedBackPath);
-        return;
-      }
-
-      const candidates = backCandidates();
-      const tester = new Image();
-      let index = 0;
-
-      function tryNext() {
-        if (index >= candidates.length) {
-          state.resolvedBackPath = candidates[0];
-          callback(state.resolvedBackPath);
-          return;
-        }
-        const src = candidates[index++];
-        tester.onload = () => {
-          state.resolvedBackPath = src;
-          callback(src);
-        };
-        tester.onerror = tryNext;
-        tester.src = src;
-      }
-
-      tryNext();
+    function cardSrc(file) {
+      return `/cards/${file}`;
     }
 
     function setCardImage(img, file, altText) {
-      loadFirstWorking(img, cardCandidates(file), altText, backCandidates());
+      img.onerror = null;
+      img.alt = altText || "";
+      img.src = cardSrc(file);
     }
 
     function setBackImage(img, altText) {
-      resolveBackImage((src) => {
-        img.onerror = null;
-        img.alt = altText || "Card back";
-        img.src = src;
-      });
+      img.onerror = null;
+      img.alt = altText || "Card back";
+      img.src = CARD_BACK_SRC;
     }
 
     function shuffleArray(arr) {
