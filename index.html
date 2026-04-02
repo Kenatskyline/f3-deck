@@ -294,10 +294,6 @@
       animation: cardReveal 420ms cubic-bezier(.2,.9,.2,1);
     }
 
-    .center-card-image.shuffle-bump {
-      animation: shuffleBump 380ms cubic-bezier(.2,.9,.2,1);
-    }
-
     @keyframes cardReveal {
       0% {
         transform: translateY(12px) scale(0.94);
@@ -311,13 +307,6 @@
         transform: translateY(0) scale(1);
         filter: drop-shadow(0 16px 28px rgba(0,0,0,0.30));
       }
-    }
-
-    @keyframes shuffleBump {
-      0% { transform: scale(1) rotate(0deg); }
-      35% { transform: scale(1.03) rotate(-1deg); }
-      70% { transform: scale(0.985) rotate(1deg); }
-      100% { transform: scale(1) rotate(0deg); }
     }
 
     .discard-pile-card img {
@@ -510,8 +499,8 @@
     ];
 
     const jokers = [
-      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "joker_1.png", label: "JOKER" },
-      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "joker_2.png", label: "JOKER" }
+      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "JOKER_1.png", label: "JOKER" },
+      { suit: "JOKER", suitName: "joker", rank: "JOKER", file: "JOKER_2.png", label: "JOKER" }
     ];
 
     const state = {
@@ -565,8 +554,8 @@
       return unique;
     }
 
-    function basenameCandidates(nameWithoutExt) {
-      return cardCandidates(`${nameWithoutExt}.png`);
+    function backCandidates() {
+      return cardCandidates(CARD_BACK_FILE);
     }
 
     function loadFirstWorking(img, candidates, altText, fallbackCandidates = []) {
@@ -596,7 +585,7 @@
         return;
       }
 
-      const candidates = basenameCandidates(CARD_BACK_BASENAME);
+      const candidates = backCandidates();
       const tester = new Image();
       let index = 0;
 
@@ -619,7 +608,7 @@
     }
 
     function setCardImage(img, file, altText) {
-      loadFirstWorking(img, cardCandidates(file), altText, basenameCandidates(CARD_BACK_BASENAME));
+      loadFirstWorking(img, cardCandidates(file), altText, backCandidates());
     }
 
     function setBackImage(img, altText) {
